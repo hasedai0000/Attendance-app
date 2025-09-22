@@ -1,0 +1,7 @@
+<?php
+
+namespace App\Infrastructure\Repositories;
+
+use App\Domain\ModificationRequestBreaks\Repositories\ModificationRequestBreaksRepositoryInterface;
+
+class EloquentModificationRequestBreaksRepository implements ModificationRequestBreaksRepositoryInterface {}
