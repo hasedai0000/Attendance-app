@@ -14,36 +14,6 @@
 </head>
 
 <body>
-  <header class="header">
-    <div class="header__inner">
-      <a class="header__logo" href="/">
-        <img src="{{ asset('images/Free Market App Logo.svg') }}" alt="CorpTech フリマ">
-      </a>
-      <nav>
-        <ul class="header-nav">
-          @if (Auth::check() && Auth::user()->hasVerifiedEmail())
-            <li class="header-nav__item">
-              <a class="header-nav__link" href="/mypage?page=sell">マイページ</a>
-            </li>
-            <li class="header-nav__item">
-              <form class="form" action="/logout" method="post">
-                @csrf
-                <button class="header-nav__button">ログアウト</button>
-              </form>
-            </li>
-          @else
-            <li class="header-nav__item">
-              <a class="header-nav__link" href="/login">ログイン</a>
-            </li>
-            <li class="header-nav__item">
-              <a class="header-nav__link" href="/register">新規登録</a>
-            </li>
-          @endif
-        </ul>
-      </nav>
-    </div>
-  </header>
-
   <main>
     @yield('content')
   </main>

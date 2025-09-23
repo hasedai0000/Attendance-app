@@ -80,6 +80,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // PG08 勤怠一覧画面（管理者）
     Route::get('/admin/attendance/list', [AdminController::class, 'dailyAttendance'])->name('admin.attendance.daily');
 
+    // PG09 勤怠詳細画面（管理者） - Cursor Rulesに従って /attendance/{id} を使用
+    // 一般ユーザーと同じパスだが、認証ミドルウェアで区別
+    Route::get('/attendance/{id}', [AdminController::class, 'attendanceDetail'])->name('admin.attendance.detail');
+
     // PG10 スタッフ一覧画面（管理者）
     Route::get('/admin/staff/list', [AdminController::class, 'staffList'])->name('admin.staff.list');
 
@@ -97,7 +101,4 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // CSV出力
     Route::get('/admin/staff/{userId}/attendance/csv', [AdminController::class, 'exportCsv'])->name('admin.staff.attendance.csv');
-
-    // 管理者用勤怠詳細画面
-    Route::get('/admin/attendance/{id}', [AdminController::class, 'attendanceDetail'])->name('admin.attendance.detail');
 });

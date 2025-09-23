@@ -91,6 +91,22 @@ class AdminController extends Controller
   }
 
   /**
+   * 勤怠詳細画面（管理者）
+   */
+  public function attendanceDetail(string $attendanceId): View
+  {
+    $attendance = $this->attendanceService->getAttendanceDetail($attendanceId);
+
+    if (!$attendance) {
+      abort(404, '勤怠情報が見つかりません');
+    }
+
+    return view('admin.attendance-detail', [
+      'attendance' => $attendance,
+    ]);
+  }
+
+  /**
    * 勤怠情報修正（管理者）
    */
   public function updateAttendance(Request $request, string $attendanceId): RedirectResponse
@@ -244,21 +260,5 @@ class AdminController extends Controller
     };
 
     return response()->stream($callback, 200, $headers);
-  }
-
-  /**
-   * 勤怠詳細画面（管理者）
-   */
-  public function attendanceDetail(string $attendanceId): View
-  {
-    $attendance = $this->attendanceService->getAttendanceDetail($attendanceId);
-
-    if (!$attendance) {
-      abort(404, '勤怠情報が見つかりません');
-    }
-
-    return view('admin.attendance-detail', [
-      'attendance' => $attendance,
-    ]);
   }
 }
