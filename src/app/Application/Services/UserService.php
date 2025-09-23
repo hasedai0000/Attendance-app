@@ -4,6 +4,7 @@ namespace App\Application\Services;
 
 use App\Domain\User\Entities\User as UserEntity;
 use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Models\User;
 
 class UserService
 {
@@ -17,7 +18,6 @@ class UserService
 
     /**
      * ユーザーを取得
-     *
      */
     public function getUser(string $userId): ?UserEntity
     {
@@ -25,11 +25,26 @@ class UserService
     }
 
     /**
+     * ユーザーを取得（Eloquentモデル）
+     */
+    public function getUserById(string $userId): ?User
+    {
+        return User::find($userId);
+    }
+
+    /**
+     * 全ユーザーを取得
+     */
+    public function getAllUsers(): array
+    {
+        return User::where('is_admin', false)
+            ->orderBy('name')
+            ->get()
+            ->toArray();
+    }
+
+    /**
      * ユーザー名を更新
-     *
-     * @param string $userId
-     * @param string $name
-     * @return UserEntity
      */
     public function updateUserName(string $userId, string $name): UserEntity
     {

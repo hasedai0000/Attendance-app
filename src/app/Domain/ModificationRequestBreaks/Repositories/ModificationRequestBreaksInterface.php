@@ -2,7 +2,7 @@
 
 namespace App\Domain\ModificationRequestBreaks\Repositories;
 
-interface ModificationRequestBreaksRepositoryInterface
+interface ModificationRequestBreaksInterface
 {
     public function findAll(string $searchTerm): array;
 }

@@ -36,7 +36,7 @@ class AuthController extends Controller
                 return redirect()->intended(config('fortify.home'));
             }
 
-            return redirect()->back()->withErrors(['email' => 'メールアドレスまたはパスワードが間違っています。']);
+            return redirect()->back()->withErrors(['email' => 'ログイン情報が登録されていません']);
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors());
         }
@@ -141,5 +141,39 @@ class AuthController extends Controller
         $request->user()->sendEmailVerificationNotification();
 
         return back()->with('status', 'verification-link-sent');
+    }
+
+    /**
+     * 管理者ログイン画面表示
+     */
+    public function showAdminLogin(): View
+    {
+        return view('auth.admin-login');
+    }
+
+    /**
+     * 管理者ログイン処理
+     */
+    public function adminLogin(LoginRequest $request): RedirectResponse
+    {
+        try {
+            $validatedData = $request->validated();
+
+            if (Auth::attempt($validatedData, $request->boolean('remember'))) {
+                $request->session()->regenerate();
+
+                // 管理者かどうかチェック
+                if (Auth::user()->is_admin) {
+                    return redirect()->intended('/admin');
+                } else {
+                    Auth::logout();
+                    return redirect()->back()->withErrors(['email' => '管理者権限がありません']);
+                }
+            }
+
+            return redirect()->back()->withErrors(['email' => 'ログイン情報が登録されていません']);
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors());
+        }
     }
 }

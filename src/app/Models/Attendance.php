@@ -49,7 +49,7 @@ class Attendance extends Model
 
     public function breaks(): HasMany
     {
-        return $this->hasMany(Break::class);
+        return $this->hasMany(Breaks::class);
     }
 
     public function modificationRequests(): HasMany
