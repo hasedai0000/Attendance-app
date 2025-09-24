@@ -2,157 +2,17 @@
 
 @section('title', 'スタッフ勤怠一覧')
 
-@section('css')
-  <style>
-    .staff-attendance-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    .staff-info {
-      background-color: #f8f9fa;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-
-    .staff-name {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 0.5rem;
-    }
-
-    .staff-email {
-      color: #666;
-    }
-
-    .month-navigation {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 2rem;
-      gap: 1rem;
-    }
-
-    .month-navigation a {
-      padding: 0.5rem 1rem;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-
-    .month-navigation a:hover {
-      background-color: #0056b3;
-    }
-
-    .current-month {
-      font-size: 1.5rem;
-      font-weight: bold;
-      padding: 0 1rem;
-    }
-
-    .attendance-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 2rem;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .attendance-table th,
-    .attendance-table td {
-      padding: 0.75rem;
-      text-align: center;
-      border: 1px solid #ddd;
-    }
-
-    .attendance-table th {
-      background-color: #f8f9fa;
-      font-weight: bold;
-    }
-
-    .attendance-table tr:nth-child(even) {
-      background-color: #f8f9fa;
-    }
-
-    .attendance-table tr:hover {
-      background-color: #e8f4f8;
-    }
-
-    .detail-btn {
-      padding: 0.25rem 0.75rem;
-      background-color: #17a2b8;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 0.875rem;
-    }
-
-    .detail-btn:hover {
-      background-color: #138496;
-    }
-
-    .csv-btn {
-      padding: 0.5rem 1rem;
-      background-color: #28a745;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      font-size: 0.875rem;
-      margin-bottom: 1rem;
-      display: inline-block;
-    }
-
-    .csv-btn:hover {
-      background-color: #218838;
-    }
-
-    .nav-links {
-      text-align: center;
-      margin-top: 2rem;
-    }
-
-    .nav-links a {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      margin: 0 0.5rem;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-
-    .nav-links a:hover {
-      background-color: #0056b3;
-    }
-
-    .empty-message {
-      text-align: center;
-      padding: 2rem;
-      color: #666;
-      font-style: italic;
-    }
-  </style>
-@endsection
-
 @section('content')
-  <div class="staff-attendance-container">
-    <h1>スタッフ勤怠一覧</h1>
+<div class="admin-staff-attendance-container">
+  <!-- ヘッダー -->
+  <x-admin.header active-page="staff" />
 
-    <!-- スタッフ情報 -->
-    <div class="staff-info">
-      <div class="staff-name">{{ $user['name'] }}</div>
-      <div class="staff-email">{{ $user['email'] }}</div>
-    </div>
-
-    <!-- CSV出力ボタン -->
-    <div style="text-align: center;">
-      <a href="{{ route('admin.staff.attendance.csv', ['userId' => $user['id'], 'month' => $month]) }}"
-        class="csv-btn">CSV出力</a>
+  <!-- メインコンテンツ -->
+  <div class="admin-content">
+    <!-- タイトル -->
+    <div class="page-title">
+      <div class="title-line"></div>
+      <h1>{{ $user['name'] }}さんの勤怠</h1>
     </div>
 
     <!-- 月間ナビゲーション -->
@@ -163,34 +23,41 @@
         $nextMonth = $currentMonth->copy()->addMonth();
       @endphp
 
-      <a
-        href="{{ route('admin.staff.attendance', ['userId' => $user['id'], 'month' => $prevMonth->format('Y-m')]) }}">前月</a>
+      <a href="{{ route('admin.staff.attendance', ['id' => $user['id'], 'month' => $prevMonth->format('Y-m')]) }}" class="nav-arrow">
+        <img src="{{ asset('images/arrow-left.svg') }}" alt="前月" class="arrow-icon">
+      </a>
       <span class="current-month">{{ $currentMonth->format('Y年m月') }}</span>
-      <a
-        href="{{ route('admin.staff.attendance', ['userId' => $user['id'], 'month' => $nextMonth->format('Y-m')]) }}">翌月</a>
+      <a href="{{ route('admin.staff.attendance', ['id' => $user['id'], 'month' => $nextMonth->format('Y-m')]) }}" class="nav-arrow">
+        <img src="{{ asset('images/arrow-right.svg') }}" alt="翌月" class="arrow-icon">
+      </a>
     </div>
 
     <!-- 勤怠一覧テーブル -->
-    @if (count($attendances) > 0)
+    <div class="attendance-table-container">
       <table class="attendance-table">
         <thead>
-          <tr>
+          <tr class="table-header">
             <th>日付</th>
-            <th>出勤時刻</th>
-            <th>退勤時刻</th>
-            <th>休憩時間</th>
-            <th>勤務時間</th>
+            <th>出勤</th>
+            <th>退勤</th>
+            <th>休憩</th>
+            <th>合計</th>
             <th>詳細</th>
           </tr>
         </thead>
         <tbody>
-          @foreach ($attendances as $attendance)
-            <tr>
-              <td>{{ \Carbon\Carbon::parse($attendance['date'])->format('m/d') }}</td>
-              <td>{{ $attendance['start_time'] ? \Carbon\Carbon::parse($attendance['start_time'])->format('H:i') : '' }}
+          @forelse($attendances as $attendance)
+            <tr class="table-row">
+              <td class="date-cell">
+                {{ \Carbon\Carbon::parse($attendance['date'])->format('m/d') }}({{ \Carbon\Carbon::parse($attendance['date'])->locale('ja')->isoFormat('ddd') }})
               </td>
-              <td>{{ $attendance['end_time'] ? \Carbon\Carbon::parse($attendance['end_time'])->format('H:i') : '' }}</td>
-              <td>
+              <td class="time-cell">
+                {{ $attendance['start_time'] ? \Carbon\Carbon::parse($attendance['start_time'])->format('H:i') : '' }}
+              </td>
+              <td class="time-cell">
+                {{ $attendance['end_time'] ? \Carbon\Carbon::parse($attendance['end_time'])->format('H:i') : '' }}
+              </td>
+              <td class="time-cell">
                 @if (isset($attendance['breaks']) && count($attendance['breaks']) > 0)
                   @php
                     $totalBreakMinutes = 0;
@@ -209,7 +76,7 @@
                   -
                 @endif
               </td>
-              <td>
+              <td class="time-cell">
                 @if ($attendance['start_time'] && $attendance['end_time'])
                   @php
                     $start = \Carbon\Carbon::parse($attendance['start_time']);
@@ -233,26 +100,227 @@
                   -
                 @endif
               </td>
-              <td>
-                <a href="{{ route('attendance.detail', $attendance['id']) }}" class="detail-btn">詳細</a>
+              <td class="detail-cell">
+                <a href="{{ route('admin.attendance.detail', $attendance['id']) }}" class="detail-link">詳細</a>
               </td>
             </tr>
-          @endforeach
+          @empty
+            <tr class="table-row">
+              <td colspan="6" class="no-data">この月の勤怠データはありません</td>
+            </tr>
+          @endforelse
         </tbody>
       </table>
-    @else
-      <div class="empty-message">
-        この月の勤怠データはありません。
-      </div>
-    @endif
+    </div>
 
-    <!-- ナビゲーションリンク -->
-    <div class="nav-links">
-      <a href="{{ route('admin.staff.list') }}">スタッフ一覧に戻る</a>
-      <a href="{{ route('admin.index') }}">管理者ダッシュボード</a>
+    <!-- CSV出力ボタン -->
+    <div class="csv-button-container">
+      <a href="{{ route('admin.staff.attendance.csv', ['userId' => $user['id'], 'month' => $month]) }}" class="csv-button">
+        CSV出力
+      </a>
     </div>
   </div>
-@endsection
-```
+</div>
 
-</rewritten_file>
+<style>
+.admin-staff-attendance-container {
+  min-height: 100vh;
+  background-color: #F0EFF2;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 40px 302px;
+  max-width: 1512px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+  margin-bottom: 40px;
+}
+
+.title-line {
+  width: 8px;
+  height: 40px;
+  background-color: #000000;
+}
+
+.page-title h1 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.21;
+  color: #000000;
+  margin: 0;
+}
+
+.month-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.nav-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 15px;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.nav-arrow:hover {
+  opacity: 0.7;
+}
+
+.arrow-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.current-month {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.21;
+  color: #000000;
+  padding: 0 20px;
+}
+
+.attendance-table-container {
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  background-color: #FFFFFF;
+  border-bottom: 3px solid #E1E1E1;
+}
+
+.table-header th {
+  padding: 15px 36px;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.21;
+  letter-spacing: 0.15em;
+  color: #737373;
+}
+
+.table-row {
+  border-bottom: 2px solid #E1E1E1;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row td {
+  padding: 15px 36px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.21;
+  letter-spacing: 0.15em;
+  color: #737373;
+}
+
+.date-cell {
+  text-align: left;
+}
+
+.time-cell {
+  text-align: center;
+}
+
+.detail-link {
+  color: #000000;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.detail-link:hover {
+  opacity: 0.7;
+}
+
+.no-data {
+  text-align: center;
+  color: #737373;
+  font-style: italic;
+}
+
+.csv-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 40px;
+}
+
+.csv-button {
+  background-color: #000000;
+  color: #FFFFFF;
+  padding: 11px 39px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.21;
+  letter-spacing: 0.15em;
+  transition: opacity 0.2s ease;
+}
+
+.csv-button:hover {
+  opacity: 0.8;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 1200px) {
+  .admin-content {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-content {
+    padding: 20px 16px;
+  }
+  
+  .page-title h1 {
+    font-size: 24px;
+  }
+  
+  .attendance-table-container {
+    overflow-x: auto;
+  }
+  
+  .table-header th,
+  .table-row td {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .csv-button {
+    font-size: 18px;
+    padding: 10px 30px;
+  }
+}
+</style>
+@endsection

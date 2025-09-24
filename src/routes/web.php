@@ -74,9 +74,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // 管理者専用ルート
 Route::middleware(['auth', 'admin'])->group(function () {
-    // 管理者ダッシュボード
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-
     // PG08 勤怠一覧画面（管理者）
     Route::get('/admin/attendance/list', [AdminController::class, 'dailyAttendance'])->name('admin.attendance.daily');
 
