@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="profile__actions">
-        <a href="{{ route('mypage.profile.show') }}" class="profile__edit-btn">プロフィールを編集</a>
+        <a href="{{ route('attendance.index') }}" class="profile__edit-btn">勤怠画面へ</a>
       </div>
     </div>
 

@@ -119,14 +119,14 @@ class AuthController extends Controller
     public function verifyEmail(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->route('mypage.profile.show');
+            return redirect()->route('attendance.index');
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new \Illuminate\Auth\Events\Verified($request->user()));
         }
 
-        return redirect()->route('mypage.profile.show')->with('verified', true);
+        return redirect()->route('attendance.index')->with('verified', true);
     }
 
     /**

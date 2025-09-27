@@ -2,266 +2,177 @@
 
 @section('title', '勤怠詳細')
 
-@section('css')
-  <style>
-    .attendance-detail-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    .detail-card {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      padding: 2rem;
-      margin-bottom: 2rem;
-    }
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .detail-row:last-child {
-      border-bottom: none;
-    }
-
-    .detail-label {
-      font-weight: bold;
-      color: #333;
-      min-width: 120px;
-    }
-
-    .detail-value {
-      color: #666;
-    }
-
-    .breaks-section {
-      margin-top: 2rem;
-    }
-
-    .breaks-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-
-    .breaks-table th,
-    .breaks-table td {
-      padding: 0.75rem;
-      text-align: center;
-      border: 1px solid #ddd;
-    }
-
-    .breaks-table th {
-      background-color: #f8f9fa;
-      font-weight: bold;
-    }
-
-    .breaks-table tr:nth-child(even) {
-      background-color: #f8f9fa;
-    }
-
-    .modification-form {
-      background-color: #f8f9fa;
-      padding: 2rem;
-      border-radius: 8px;
-      margin-top: 2rem;
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-      color: #333;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-
-    .form-group textarea {
-      height: 100px;
-      resize: vertical;
-    }
-
-    .time-input-group {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .time-input-group input {
-      flex: 1;
-    }
-
-    .submit-btn {
-      background-color: #28a745;
-      color: white;
-      padding: 0.75rem 2rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-
-    .submit-btn:hover {
-      background-color: #218838;
-    }
-
-    .nav-links {
-      text-align: center;
-      margin-top: 2rem;
-    }
-
-    .nav-links a {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      margin: 0 0.5rem;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-
-    .nav-links a:hover {
-      background-color: #0056b3;
-    }
-
-    .error-message {
-      color: #dc3545;
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-    }
-
-    .message {
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 4px;
-      text-align: center;
-    }
-
-    .message-success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-
-    .message-error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-
-    .pending-message {
-      background-color: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeaa7;
-      padding: 1rem;
-      border-radius: 4px;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-  </style>
-@endsection
-
 @section('content')
   <div class="attendance-detail-container">
-    <h1>勤怠詳細</h1>
-
-    @if (session('message'))
-      <div class="message message-success">
-        {{ session('message') }}
-      </div>
-    @endif
-
-    @if (session('error'))
-      <div class="message message-error">
-        {{ session('error') }}
-      </div>
-    @endif
-
-    <!-- 基本情報 -->
-    <div class="detail-card">
-      <h2>基本情報</h2>
-      <div class="detail-row">
-        <span class="detail-label">名前</span>
-        <span class="detail-value">{{ $attendance->user->name }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">日付</span>
-        <span class="detail-value">{{ \Carbon\Carbon::parse($attendance->date)->format('Y年m月d日') }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">出勤時刻</span>
-        <span
-          class="detail-value">{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '未設定' }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">退勤時刻</span>
-        <span
-          class="detail-value">{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '未設定' }}</span>
-      </div>
-      <div class="detail-row">
-        <span class="detail-label">備考</span>
-        <span class="detail-value">{{ $attendance->remarks ?: '未入力' }}</span>
-      </div>
+    <!-- ヘッダー -->
+    <div class="attendance-header">
+      <img src="{{ asset('images/coachtech-logo.svg') }}" alt="CoachTech" class="logo">
+      <nav class="attendance-nav">
+        <a href="{{ route('attendance.index') }}" class="nav-item">勤怠</a>
+        <a href="{{ route('attendance.list') }}" class="nav-item active">勤怠一覧</a>
+        <a href="{{ route('modification-requests.index') }}" class="nav-item">申請</a>
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="nav-item">ログアウト</button>
+        </form>
+      </nav>
     </div>
 
-    <!-- 休憩情報 -->
-    <div class="detail-card">
-      <h2>休憩情報</h2>
-      @if (count($breaks) > 0)
-        <table class="breaks-table">
-          <thead>
-            <tr>
-              <th>休憩回数</th>
-              <th>開始時刻</th>
-              <th>終了時刻</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach ($breaks as $index => $break)
-              <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ $break['start_time'] ? \Carbon\Carbon::parse($break['start_time'])->format('H:i') : '未設定' }}</td>
-                <td>{{ $break['end_time'] ? \Carbon\Carbon::parse($break['end_time'])->format('H:i') : '未設定' }}</td>
-              </tr>
-            @endforeach
-          </tbody>
-        </table>
-      @else
-        <p>休憩データがありません。</p>
+    <!-- メインコンテンツ -->
+    <div class="attendance-main">
+      @if (session('message'))
+        <div class="message message-success">
+          {{ session('message') }}
+        </div>
       @endif
-    </div>
 
-    <!-- 修正申請フォーム -->
-    @if (Auth::user()->role !== 'admin')
-      <!-- 一般ユーザーの場合は修正申請フォーム -->
+      @if (session('error'))
+        <div class="message message-error">
+          {{ session('error') }}
+        </div>
+      @endif
+
+      <!-- タイトル -->
+      <div class="page-title">
+        <div class="title-line"></div>
+        <h1>勤怠詳細</h1>
+      </div>
+
+      <!-- 勤怠詳細カード -->
+      <div class="attendance-detail-card">
+        <!-- 名前 -->
+        <div class="detail-row">
+          <div class="detail-label">名前</div>
+          <div class="detail-value">{{ $attendance->user->name }}</div>
+        </div>
+
+        <!-- 日付 -->
+        <div class="detail-row">
+          <div class="detail-label">日付</div>
+          <div class="detail-value">
+            <span class="year">{{ \Carbon\Carbon::parse($attendance->date)->format('Y年') }}</span>
+            <span class="date">{{ \Carbon\Carbon::parse($attendance->date)->format('m月d日') }}</span>
+          </div>
+        </div>
+
+        <!-- 出勤・退勤 -->
+        <div class="detail-row">
+          <div class="detail-label">出勤・退勤</div>
+          <div class="detail-value">
+            <div class="time-box">
+              {{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '未設定' }}</div>
+            <span class="separator">〜</span>
+            <div class="time-box">
+              {{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '未設定' }}</div>
+          </div>
+        </div>
+
+        <!-- 休憩時間 -->
+        @if (count($breaks) > 0)
+          @foreach ($breaks as $index => $break)
+            <div class="detail-row">
+              <div class="detail-label">休憩{{ $index > 0 ? $index + 1 : '' }}</div>
+              <div class="detail-value">
+                <div class="time-box">
+                  {{ $break['start_time'] ? \Carbon\Carbon::parse($break['start_time'])->format('H:i') : '未設定' }}</div>
+                <span class="separator">〜</span>
+                <div class="time-box">
+                  {{ $break['end_time'] ? \Carbon\Carbon::parse($break['end_time'])->format('H:i') : '未設定' }}</div>
+              </div>
+            </div>
+          @endforeach
+        @endif
+
+        <!-- 備考 -->
+        <div class="detail-row">
+          <div class="detail-label">備考</div>
+          <div class="detail-value">
+            <div class="remarks-box">{{ $attendance->remarks ?: '未入力' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 一般ユーザーの場合 -->
       @if ($attendance->hasPendingModificationRequest ?? false)
         <div class="pending-message">
-          承認待ちのため修正はできません。
+          ※承認待ちのため修正はできません
         </div>
       @else
-        <div class="modification-form">
-          <h2>修正申請</h2>
-          <form action="{{ route('modification-requests.store') }}" method="POST">
+        <div class="modify-button-container">
+          <button class="modify-button" onclick="showModifyForm()">修正</button>
+        </div>
+      @endif
+
+      <!-- 修正申請フォーム（非表示） -->
+      @if (Auth::user()->role !== 'admin')
+        <!-- 一般ユーザーの場合は修正申請フォーム -->
+        @if ($attendance->hasPendingModificationRequest ?? false)
+          <!-- 申請待ちの場合はフォームを表示しない -->
+        @else
+          <div class="modification-form" id="modificationForm" style="display: none;">
+            <h2 class="section-title">修正申請</h2>
+            <form action="{{ route('modification-requests.store') }}" method="POST">
+              @csrf
+              <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
+
+              <div class="form-group">
+                <label>出勤・退勤時刻</label>
+                <div class="time-input-group">
+                  <input type="time" name="start_time"
+                    value="{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '' }}">
+                  <span>〜</span>
+                  <input type="time" name="end_time"
+                    value="{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '' }}">
+                </div>
+                @error('start_time')
+                  <div class="error-message">{{ $message }}</div>
+                @enderror
+                @error('end_time')
+                  <div class="error-message">{{ $message }}</div>
+                @enderror
+              </div>
+
+              <div class="form-group">
+                <label>休憩時間</label>
+                @foreach ($breaks as $index => $break)
+                  <div class="time-input-group">
+                    <input type="time" name="breaks[{{ $index }}][start_time]"
+                      value="{{ $break['start_time'] ? \Carbon\Carbon::parse($break['start_time'])->format('H:i') : '' }}">
+                    <span>〜</span>
+                    <input type="time" name="breaks[{{ $index }}][end_time]"
+                      value="{{ $break['end_time'] ? \Carbon\Carbon::parse($break['end_time'])->format('H:i') : '' }}">
+                  </div>
+                @endforeach
+                <!-- 新しい休憩時間の追加 -->
+                <div class="time-input-group">
+                  <input type="time" name="breaks[{{ count($breaks) }}][start_time]" placeholder="新しい休憩開始">
+                  <span>〜</span>
+                  <input type="time" name="breaks[{{ count($breaks) }}][end_time]" placeholder="新しい休憩終了">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>備考 *</label>
+                <textarea name="remarks" required>{{ old('remarks', $attendance->remarks) }}</textarea>
+                @error('remarks')
+                  <div class="error-message">{{ $message }}</div>
+                @enderror
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="hideModifyForm()">キャンセル</button>
+                <button type="submit" class="submit-btn">修正申請</button>
+              </div>
+            </form>
+          </div>
+        @endif
+      @else
+        <!-- 管理者の場合は直接修正フォーム -->
+        <div class="modification-form" id="modificationForm" style="display: none;">
+          <h2 class="section-title">勤怠情報修正</h2>
+          <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST">
             @csrf
-            <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
+            @method('PUT')
 
             <div class="form-group">
               <label>出勤・退勤時刻</label>
@@ -281,25 +192,6 @@
             </div>
 
             <div class="form-group">
-              <label>休憩時間</label>
-              @foreach ($breaks as $index => $break)
-                <div class="time-input-group">
-                  <input type="time" name="breaks[{{ $index }}][start_time]"
-                    value="{{ $break['start_time'] ? \Carbon\Carbon::parse($break['start_time'])->format('H:i') : '' }}">
-                  <span>〜</span>
-                  <input type="time" name="breaks[{{ $index }}][end_time]"
-                    value="{{ $break['end_time'] ? \Carbon\Carbon::parse($break['end_time'])->format('H:i') : '' }}">
-                </div>
-              @endforeach
-              <!-- 新しい休憩時間の追加 -->
-              <div class="time-input-group">
-                <input type="time" name="breaks[{{ count($breaks) }}][start_time]" placeholder="新しい休憩開始">
-                <span>〜</span>
-                <input type="time" name="breaks[{{ count($breaks) }}][end_time]" placeholder="新しい休憩終了">
-              </div>
-            </div>
-
-            <div class="form-group">
               <label>備考 *</label>
               <textarea name="remarks" required>{{ old('remarks', $attendance->remarks) }}</textarea>
               @error('remarks')
@@ -307,52 +199,469 @@
               @enderror
             </div>
 
-            <button type="submit" class="submit-btn">修正申請</button>
+            <div class="form-actions">
+              <button type="button" class="cancel-btn" onclick="hideModifyForm()">キャンセル</button>
+              <button type="submit" class="submit-btn">修正</button>
+            </div>
           </form>
         </div>
       @endif
-    @else
-      <!-- 管理者の場合は直接修正フォーム -->
-      <div class="modification-form">
-        <h2>勤怠情報修正</h2>
-        <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST">
-          @csrf
-          @method('PUT')
-
-          <div class="form-group">
-            <label>出勤・退勤時刻</label>
-            <div class="time-input-group">
-              <input type="time" name="start_time"
-                value="{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '' }}">
-              <span>〜</span>
-              <input type="time" name="end_time"
-                value="{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '' }}">
-            </div>
-            @error('start_time')
-              <div class="error-message">{{ $message }}</div>
-            @enderror
-            @error('end_time')
-              <div class="error-message">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <div class="form-group">
-            <label>備考 *</label>
-            <textarea name="remarks" required>{{ old('remarks', $attendance->remarks) }}</textarea>
-            @error('remarks')
-              <div class="error-message">{{ $message }}</div>
-            @enderror
-          </div>
-
-          <button type="submit" class="submit-btn">修正</button>
-        </form>
-      </div>
-    @endif
-
-    <!-- ナビゲーションリンク -->
-    <div class="nav-links">
-      <a href="{{ route('attendance.list') }}">勤怠一覧に戻る</a>
-      <a href="{{ route('attendance.index') }}">勤怠打刻に戻る</a>
     </div>
   </div>
+
+  <script>
+    function showModifyForm() {
+      document.getElementById('modificationForm').style.display = 'block';
+    }
+
+    function hideModifyForm() {
+      document.getElementById('modificationForm').style.display = 'none';
+    }
+  </script>
+
+  <style>
+    .attendance-detail-container {
+      min-height: 100vh;
+      background-color: #F0EFF2;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .attendance-header {
+      background-color: #000000;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 25px;
+    }
+
+    .logo {
+      height: 36px;
+      width: auto;
+    }
+
+    .attendance-nav {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .nav-item {
+      color: #FFFFFF;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1.21;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-item:hover {
+      opacity: 0.8;
+    }
+
+    .nav-item.active {
+      color: #FFFFFF;
+    }
+
+    .attendance-main {
+      flex: 1;
+      padding: 40px 306px;
+      max-width: 1512px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 21px;
+      margin-bottom: 40px;
+    }
+
+    .title-line {
+      width: 8px;
+      height: 40px;
+      background-color: #000000;
+    }
+
+    .page-title h1 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 1.21;
+      color: #000000;
+      margin: 0;
+    }
+
+    .attendance-detail-card {
+      background-color: #FFFFFF;
+      border-radius: 10px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 2px solid #E1E1E1;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.21;
+      color: #737373;
+      min-width: 120px;
+      margin-right: 20px;
+    }
+
+    .detail-value {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.21;
+      color: #000000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-value .year {
+      margin-right: 8px;
+    }
+
+    .time-box {
+      background-color: #FFFFFF;
+      border: 1px solid #E1E1E1;
+      border-radius: 4px;
+      padding: 4px 8px;
+      min-width: 60px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #000000;
+    }
+
+    .detail-value .separator {
+      margin: 0 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #000000;
+    }
+
+    .remarks-box {
+      background-color: #FFFFFF;
+      border: 1px solid #D9D9D9;
+      border-radius: 4px;
+      padding: 8px 12px;
+      min-height: 60px;
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      align-items: flex-start;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #000000;
+    }
+
+    .modify-button-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 40px;
+    }
+
+    .modify-button {
+      background-color: #000000;
+      color: #FFFFFF;
+      padding: 11px 41px;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.21;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .modify-button:hover {
+      opacity: 0.8;
+    }
+
+    .modification-form {
+      background-color: #FFFFFF;
+      border-radius: 10px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1.21;
+      color: #000000;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #E1E1E1;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.21;
+      color: #737373;
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #E1E1E1;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.21;
+      color: #000000;
+      background-color: #FFFFFF;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #000000;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .time-input-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .time-input-group input {
+      flex: 1;
+    }
+
+    .time-input-group span {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #000000;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-end;
+      margin-top: 30px;
+    }
+
+    .cancel-btn {
+      background-color: #FFFFFF;
+      color: #000000;
+      padding: 12px 32px;
+      border: 1px solid #E1E1E1;
+      border-radius: 5px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.21;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .cancel-btn:hover {
+      opacity: 0.8;
+    }
+
+    .submit-btn {
+      background-color: #000000;
+      color: #FFFFFF;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.21;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.8;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .message {
+      padding: 16px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+    }
+
+    .message-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .message-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .pending-message {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 40px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: rgba(255, 0, 0, 0.5);
+    }
+
+    /* レスポンシブデザイン */
+    @media (max-width: 1200px) {
+      .attendance-nav {
+        gap: 20px;
+      }
+
+      .nav-item {
+        font-size: 18px;
+      }
+
+      .attendance-main {
+        padding: 40px 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .attendance-header {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+        gap: 20px;
+      }
+
+      .attendance-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .nav-item {
+        font-size: 16px;
+      }
+
+      .attendance-main {
+        padding: 20px 16px;
+      }
+
+      .page-title h1 {
+        font-size: 24px;
+      }
+
+      .attendance-detail-card,
+      .modification-form {
+        padding: 20px;
+      }
+
+      .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .detail-label {
+        min-width: auto;
+        margin-right: 0;
+      }
+
+      .modify-button-container {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-title h1 {
+        font-size: 20px;
+      }
+
+      .section-title {
+        font-size: 20px;
+      }
+
+      .detail-label {
+        font-size: 14px;
+      }
+
+      .detail-value {
+        font-size: 14px;
+      }
+
+      .form-group label {
+        font-size: 14px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        font-size: 14px;
+      }
+
+      .modify-button {
+        font-size: 18px;
+        padding: 10px 24px;
+      }
+
+      .submit-btn,
+      .cancel-btn {
+        font-size: 16px;
+        padding: 10px 24px;
+      }
+    }
+  </style>
 @endsection

@@ -2,122 +2,271 @@
 
 @section('title', '勤怠打刻')
 
-@section('css')
+@section('content')
+  <div class="attendance-container">
+    <!-- ヘッダー -->
+    <div class="attendance-header">
+      <img src="{{ asset('images/coachtech-logo.svg') }}" alt="CoachTech" class="logo">
+      <nav class="attendance-nav">
+        <a href="{{ route('attendance.index') }}" class="nav-item active">勤怠</a>
+        <a href="{{ route('attendance.list') }}" class="nav-item">勤怠一覧</a>
+        <a href="{{ route('modification-requests.index') }}" class="nav-item">申請</a>
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="nav-item">ログアウト</button>
+        </form>
+      </nav>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="attendance-main">
+      @if (session('message'))
+        <div class="message message-success">
+          {{ session('message') }}
+        </div>
+      @endif
+
+      @if (session('error'))
+        <div class="message message-error">
+          {{ session('error') }}
+        </div>
+      @endif
+
+      <!-- ステータスバッジ -->
+      <div class="status-badge">
+        @switch($currentStatus)
+          @case('not_working')
+            <span class="status-text">勤務外</span>
+          @break
+
+          @case('working')
+            <span class="status-text">出勤中</span>
+          @break
+
+          @case('on_break')
+            <span class="status-text">休憩中</span>
+          @break
+
+          @case('finished')
+            <span class="status-text">退勤済</span>
+          @break
+
+          @default
+            <span class="status-text">不明</span>
+        @endswitch
+      </div>
+
+      <!-- 日付表示 -->
+      <div class="date-display">
+        {{ $currentDateTime->format('Y年m月d日') }}
+      </div>
+
+      <!-- 時刻表示 -->
+      <div class="time-display">
+        {{ $currentDateTime->format('H:i') }}
+      </div>
+
+      <!-- アクションボタン -->
+      <div class="action-buttons">
+        @if ($currentStatus === 'not_working')
+          <form action="{{ route('attendance.start-work') }}" method="POST">
+            @csrf
+            <button type="submit" class="action-btn btn-start-work">出勤</button>
+          </form>
+        @endif
+
+        @if ($currentStatus === 'working')
+          <form action="{{ route('attendance.start-break') }}" method="POST" class="break-form">
+            @csrf
+            <button type="submit" class="action-btn btn-start-break">休憩入</button>
+          </form>
+
+          <form action="{{ route('attendance.end-work') }}" method="POST" class="end-work-form">
+            @csrf
+            <button type="submit" class="action-btn btn-end-work">退勤</button>
+          </form>
+        @endif
+
+        @if ($currentStatus === 'on_break')
+          <form action="{{ route('attendance.end-break') }}" method="POST">
+            @csrf
+            <button type="submit" class="action-btn btn-end-break">休憩戻</button>
+          </form>
+        @endif
+
+        @if ($currentStatus === 'finished')
+          <div class="finished-message">
+            <p>お疲れ様でした。</p>
+          </div>
+        @endif
+      </div>
+    </div>
+  </div>
+
   <style>
     .attendance-container {
-      max-width: 600px;
+      min-height: 100vh;
+      background-color: #F0EFF2;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .attendance-header {
+      background-color: #000000;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 25px;
+    }
+
+    .logo {
+      height: 36px;
+      width: auto;
+    }
+
+    .attendance-nav {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .nav-item {
+      color: #FFFFFF;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1.21;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-item:hover {
+      opacity: 0.8;
+    }
+
+    .nav-item.active {
+      color: #FFFFFF;
+    }
+
+    .attendance-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      max-width: 1512px;
       margin: 0 auto;
-      padding: 2rem;
+      width: 100%;
     }
 
-    .datetime-display {
+    .date-display {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 1.21;
+      color: #000000;
+      margin-bottom: 40px;
       text-align: center;
-      margin-bottom: 2rem;
-      padding: 1rem;
-      background-color: #f8f9fa;
-      border-radius: 8px;
     }
 
-    .date {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-
-    .time {
-      font-size: 1.2rem;
-      color: #666;
-    }
-
-    .status-display {
+    .time-display {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 80px;
+      line-height: 1.21;
+      color: #000000;
+      margin-bottom: 40px;
       text-align: center;
-      margin-bottom: 2rem;
-      padding: 1rem;
-      border-radius: 8px;
     }
 
-    .status-working {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
+    .status-badge {
+      background-color: #C8C8C8;
+      border-radius: 50px;
+      padding: 8px 20px;
+      margin-bottom: 40px;
     }
 
-    .status-on-break {
-      background-color: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeaa7;
-    }
-
-    .status-finished {
-      background-color: #d1ecf1;
-      color: #0c5460;
-      border: 1px solid #bee5eb;
-    }
-
-    .status-not-working {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
+    .status-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.21;
+      color: #696969;
+      letter-spacing: 0.15em;
     }
 
     .action-buttons {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      max-width: 300px;
-      margin: 0 auto;
+      align-items: center;
+      gap: 20px;
     }
 
     .action-btn {
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-      font-weight: bold;
+      width: 221px;
+      height: 77px;
       border: none;
-      border-radius: 8px;
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      line-height: 1.21;
+      letter-spacing: 0.15em;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: opacity 0.2s ease;
+      text-align: center;
     }
 
     .btn-start-work {
-      background-color: #28a745;
-      color: white;
+      background-color: #000000;
+      color: #FFFFFF;
     }
 
     .btn-start-work:hover {
-      background-color: #218838;
+      opacity: 0.8;
     }
 
     .btn-start-break {
-      background-color: #ffc107;
-      color: #212529;
+      background-color: #000000;
+      color: #FFFFFF;
     }
 
     .btn-start-break:hover {
-      background-color: #e0a800;
+      opacity: 0.8;
     }
 
     .btn-end-break {
-      background-color: #17a2b8;
-      color: white;
+      background-color: #FFFFFF;
+      color: #000000;
     }
 
     .btn-end-break:hover {
-      background-color: #138496;
+      opacity: 0.8;
     }
 
     .btn-end-work {
-      background-color: #dc3545;
-      color: white;
+      background-color: #FFFFFF;
+      color: #000000;
     }
 
     .btn-end-work:hover {
-      background-color: #c82333;
+      opacity: 0.8;
     }
 
-    .btn-disabled {
-      background-color: #6c757d;
-      color: white;
-      cursor: not-allowed;
+    .finished-message {
+      text-align: center;
+    }
+
+    .finished-message p {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 26px;
+      line-height: 1.21;
+      color: #000000;
+      letter-spacing: 0.15em;
+      margin: 0;
     }
 
     .message {
@@ -125,6 +274,9 @@
       margin-bottom: 1rem;
       border-radius: 4px;
       text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
     }
 
     .message-success {
@@ -139,131 +291,97 @@
       border: 1px solid #f5c6cb;
     }
 
-    .nav-links {
-      text-align: center;
-      margin-top: 2rem;
+    /* レスポンシブデザイン */
+    @media (max-width: 1200px) {
+      .attendance-nav {
+        gap: 20px;
+      }
+
+      .nav-item {
+        font-size: 18px;
+      }
     }
 
-    .nav-links a {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      margin: 0 0.5rem;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
+    @media (max-width: 768px) {
+      .attendance-header {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+        gap: 20px;
+      }
+
+      .attendance-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .nav-item {
+        font-size: 16px;
+      }
+
+      .attendance-main {
+        padding: 20px 16px;
+      }
+
+      .date-display {
+        font-size: 32px;
+        margin-bottom: 30px;
+      }
+
+      .time-display {
+        font-size: 60px;
+        margin-bottom: 30px;
+      }
+
+      .action-btn {
+        width: 200px;
+        height: 60px;
+        font-size: 28px;
+      }
+
+      .finished-message p {
+        font-size: 22px;
+      }
     }
 
-    .nav-links a:hover {
-      background-color: #0056b3;
+    @media (max-width: 480px) {
+      .date-display {
+        font-size: 28px;
+      }
+
+      .time-display {
+        font-size: 48px;
+      }
+
+      .action-btn {
+        width: 180px;
+        height: 50px;
+        font-size: 24px;
+      }
+
+      .finished-message p {
+        font-size: 20px;
+      }
     }
   </style>
-@endsection
-
-@section('content')
-  <div class="attendance-container">
-    <h1>勤怠打刻</h1>
-
-    @if (session('message'))
-      <div class="message message-success">
-        {{ session('message') }}
-      </div>
-    @endif
-
-    @if (session('error'))
-      <div class="message message-error">
-        {{ session('error') }}
-      </div>
-    @endif
-
-    <!-- 現在の日時表示 -->
-    <div class="datetime-display">
-      <div class="date">{{ $currentDateTime->format('Y年m月d日') }}</div>
-      <div class="time">{{ $currentDateTime->format('H:i:s') }}</div>
-    </div>
-
-    <!-- ステータス表示 -->
-    <div class="status-display status-{{ $currentStatus }}">
-      <h2>現在のステータス:
-        @switch($currentStatus)
-          @case('not_working')
-            勤務外
-          @break
-
-          @case('working')
-            出勤中
-          @break
-
-          @case('on_break')
-            休憩中
-          @break
-
-          @case('finished')
-            退勤済
-          @break
-
-          @default
-            不明
-        @endswitch
-      </h2>
-    </div>
-
-    <!-- アクションボタン -->
-    <div class="action-buttons">
-      @if ($currentStatus === 'not_working')
-        <form action="{{ route('attendance.start-work') }}" method="POST">
-          @csrf
-          <button type="submit" class="action-btn btn-start-work">出勤</button>
-        </form>
-      @endif
-
-      @if ($currentStatus === 'working')
-        <form action="{{ route('attendance.start-break') }}" method="POST">
-          @csrf
-          <button type="submit" class="action-btn btn-start-break">休憩入</button>
-        </form>
-
-        <form action="{{ route('attendance.end-work') }}" method="POST">
-          @csrf
-          <button type="submit" class="action-btn btn-end-work">退勤</button>
-        </form>
-      @endif
-
-      @if ($currentStatus === 'on_break')
-        <form action="{{ route('attendance.end-break') }}" method="POST">
-          @csrf
-          <button type="submit" class="action-btn btn-end-break">休憩戻</button>
-        </form>
-      @endif
-
-      @if ($currentStatus === 'finished')
-        <p>本日の勤務は終了しています。お疲れ様でした。</p>
-      @endif
-    </div>
-
-    <!-- ナビゲーションリンク -->
-    <div class="nav-links">
-      <a href="{{ route('attendance.list') }}">勤怠一覧</a>
-    </div>
-  </div>
 
   <script>
-    // 現在時刻を1秒ごとに更新
+    // 現在時刻を1分ごとに更新
     function updateTime() {
       const now = new Date();
-      const timeElement = document.querySelector('.time');
+      const timeElement = document.querySelector('.time-display');
       if (timeElement) {
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+        timeElement.textContent = `${hours}:${minutes}`;
       }
     }
 
     // ページ読み込み時に時刻更新を開始
     document.addEventListener('DOMContentLoaded', function() {
       updateTime();
-      setInterval(updateTime, 1000);
+      setInterval(updateTime, 60000); // 1分ごとに更新
     });
   </script>
 @endsection

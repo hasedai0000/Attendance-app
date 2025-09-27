@@ -128,13 +128,14 @@ class AttendanceController extends Controller
     public function detail($id): View
     {
         $attendance = $this->attendanceService->getAttendanceDetail($id);
-        
+
         if (!$attendance) {
             abort(404, '勤怠情報が見つかりません');
         }
 
         // 認証されたユーザーが管理者かどうかを判定
         if (Auth::user()->is_admin) {
+            dd($attendance);
             // 管理者の場合は管理者用ビューを返す
             return view('admin.attendance-detail', [
                 'attendance' => $attendance,
@@ -142,7 +143,7 @@ class AttendanceController extends Controller
         } else {
             // 一般ユーザーの場合は一般ユーザー用ビューを返す
             $breaks = $this->breaksService->getBreaksByAttendance($id);
-            
+
             return view('attendance.detail', [
                 'attendance' => $attendance,
                 'breaks' => $breaks,

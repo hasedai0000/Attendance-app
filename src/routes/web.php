@@ -4,9 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ModificationRequestController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PurchaseController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,7 +76,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // PG09 勤怠詳細画面（管理者） - Cursor Rulesに従って /attendance/{id} を使用
     // 一般ユーザーと同じパスだが、認証ミドルウェアで区別
-    Route::get('/attendance/{id}', [AdminController::class, 'attendanceDetail'])->name('admin.attendance.detail');
+    Route::get('/admin/attendance/{id}', [AdminController::class, 'attendanceDetail'])->name('admin.attendance.detail');
 
     // PG10 スタッフ一覧画面（管理者）
     Route::get('/admin/staff/list', [AdminController::class, 'staffList'])->name('admin.staff.list');
@@ -91,7 +88,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/attendance/{id}', [AdminController::class, 'updateAttendance'])->name('admin.attendance.update');
 
     // PG12 申請一覧画面（管理者） - 一般ユーザーと同じパスを使用
-    Route::get('/stamp_correction_request/list', [AdminController::class, 'modificationRequests'])->name('admin.modification-requests.index');
+    Route::get('/admin/stamp_correction_request/list', [AdminController::class, 'modificationRequests'])->name('admin.modification-requests.index');
 
     // PG13 修正申請承認画面（管理者）
     Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AdminController::class, 'approveModificationRequest'])->name('admin.modification-requests.approve');
