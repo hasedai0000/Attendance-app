@@ -34,7 +34,23 @@ class AttendanceService
       return 'not_working'; // 勤務外
     }
 
-    return $attendance->status;
+    // 出勤時間が設定されていない場合は勤務外
+    if (!$attendance->start_time) {
+      return 'not_working';
+    }
+
+    // 退勤時間が設定されている場合は退勤済み
+    if ($attendance->end_time) {
+      return 'finished';
+    }
+
+    // 休憩中かどうかをチェック
+    if ($attendance->status === 'on_break') {
+      return 'on_break';
+    }
+
+    // 出勤中
+    return 'working';
   }
 
   /**

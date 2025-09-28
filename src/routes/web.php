@@ -91,7 +91,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/stamp_correction_request/list', [AdminController::class, 'modificationRequests'])->name('admin.modification-requests.index');
 
     // PG13 修正申請承認画面（管理者）
-    Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AdminController::class, 'approveModificationRequest'])->name('admin.modification-requests.approve');
+    Route::post('/stamp_correction_request/approve/{requestId}', [AdminController::class, 'approveModificationRequest'])->name('admin.modification-requests.approve');
 
     // CSV出力
     Route::get('/admin/staff/{userId}/attendance/csv', [AdminController::class, 'exportCsv'])->name('admin.staff.attendance.csv');

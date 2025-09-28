@@ -38,7 +38,7 @@ class AdminController extends Controller
 
             // 指定日の勤怠データ
             $attendances = $this->attendanceService->getAttendancesByDate($targetDate);
-            
+
             // 今日の勤怠統計（ダッシュボード用）
             $todayAttendances = $this->attendanceService->getTodayAttendances();
             $pendingRequests = $this->modificationRequestService->getPendingModificationRequests();
@@ -115,7 +115,7 @@ class AdminController extends Controller
     {
         try {
             $attendance = $this->attendanceService->getAttendanceDetail($attendanceId);
-            
+
             if (!$attendance) {
                 abort(404, '勤怠情報が見つかりません');
             }
@@ -204,6 +204,20 @@ class AdminController extends Controller
     }
 
     /**
+     * 修正申請却下
+     */
+    public function rejectModificationRequest(string $requestId): RedirectResponse
+    {
+        try {
+            $this->modificationRequestService->rejectModificationRequest($requestId);
+
+            return redirect()->back()->with('message', '修正申請を却下しました');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', '却下に失敗しました: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * CSV出力
      */
     public function exportCsv(Request $request, string $userId)
@@ -211,7 +225,7 @@ class AdminController extends Controller
         try {
             $monthString = $request->get('month', Carbon::now()->format('Y-m'));
             $user = $this->userService->getUserById($userId);
-            
+
             if (!$user) {
                 abort(404, 'ユーザーが見つかりません');
             }

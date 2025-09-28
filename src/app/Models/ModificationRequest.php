@@ -28,8 +28,8 @@ class ModificationRequest extends Model
     ];
 
     protected $casts = [
-        'requested_start_time' => 'datetime:H:i',
-        'requested_end_time' => 'datetime:H:i',
+        'requested_start_time' => 'datetime',
+        'requested_end_time' => 'datetime',
         'approved_at' => 'datetime',
     ];
 
