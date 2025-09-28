@@ -63,13 +63,6 @@
                       <a href="{{ route('admin.attendance.detail', $request['attendance_id']) }}"
                         class="detail-link">詳細</a>
                     </td>
-                    <td class="action-cell">
-                      <form method="POST" action="{{ route('admin.modification-requests.approve', $request['id']) }}"
-                        style="display: inline;">
-                        @csrf
-                        <button type="submit" class="approve-btn" onclick="return confirm('この修正申請を承認しますか？')">承認</button>
-                      </form>
-                    </td>
                   </tr>
                 @endforeach
               </tbody>
