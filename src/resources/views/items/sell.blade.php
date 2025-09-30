@@ -9,7 +9,7 @@
 @section('content')
   <div class="auth-form__content">
     <div class="auth-form__heading">
-      <h2 class="auth-form__heading-title">商品の出品</h2>
+      <h1 class="auth-form__heading-title">商品の出品</h1>
     </div>
 
     <form class="form" action="{{ route('items.store') }}" method="post" enctype="multipart/form-data">
@@ -17,7 +17,7 @@
       <!-- 商品画像 -->
       <div class="form__group">
         <div class="form__group-title">
-          <h3 class="form__label--item">商品画像</h3>
+          <h2 class="form__label--item">商品画像</h2>
         </div>
         <div class="form__group-content">
           <div class="item-image__container">
@@ -142,7 +142,7 @@
       <!-- 販売価格 -->
       <div class="form__group">
         <div class="form__group-title">
-          <h3 class="form__label--item">販売価格</h3>
+          <h2 class="form__label--item">販売価格</h2>
         </div>
         <div class="form__group-content">
           <div class="price-input">

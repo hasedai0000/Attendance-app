@@ -29,7 +29,6 @@ class AttendanceController extends Controller
     public function index(): View
     {
         $user = Auth::user();
-        $today = Carbon::today();
 
         // 今日の勤怠情報を取得
         $attendance = $this->attendanceService->getTodayAttendance($user->id);
@@ -135,7 +134,6 @@ class AttendanceController extends Controller
 
         // 認証されたユーザーが管理者かどうかを判定
         if (Auth::user()->is_admin) {
-            dd($attendance);
             // 管理者の場合は管理者用ビューを返す
             return view('admin.attendance-detail', [
                 'attendance' => $attendance,

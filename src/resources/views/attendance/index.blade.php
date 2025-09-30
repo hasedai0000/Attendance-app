@@ -5,7 +5,7 @@
 @section('content')
   <div class="attendance-container">
     <!-- ヘッダー -->
-    <div class="attendance-header">
+    <header class="attendance-header">
       <img src="{{ asset('images/coachtech-logo.svg') }}" alt="CoachTech" class="logo">
       <nav class="attendance-nav">
         <a href="{{ route('attendance.index') }}" class="nav-item active">勤怠</a>
@@ -19,7 +19,7 @@
     </div>
 
     <!-- メインコンテンツ -->
-    <div class="attendance-main">
+    <main class="attendance-main">
       @if (session('message'))
         <div class="message message-success">
           {{ session('message') }}
