@@ -5,6 +5,14 @@
 @endsection
 
 @section('content')
+  <!-- ヘッダー部分 -->
+  <div class="header">
+    <div class="header__logo">
+      <img src="{{ asset('images/coachtech-logo.svg') }}" alt="CoachTech" class="logo">
+    </div>
+  </div>
+
+  <!-- メインコンテンツ -->
   <div class="auth-form__content">
     <div class="auth-form__heading">
       <h2 class="auth-form__heading-title">会員登録</h2>
@@ -13,7 +21,7 @@
       @csrf
       <div class="form__group">
         <div class="form__group-title">
-          <span class="form__label--item">ユーザー名</span>
+          <span class="form__label--item">名前</span>
         </div>
         <div class="form__group-content">
           <div class="form__input--text">
@@ -58,7 +66,7 @@
       </div>
       <div class="form__group">
         <div class="form__group-title">
-          <span class="form__label--item">確認用パスワード</span>
+          <span class="form__label--item">パスワード確認</span>
         </div>
         <div class="form__group-content">
           <div class="form__input--text">
@@ -67,11 +75,11 @@
         </div>
       </div>
       <div class="form__button">
-        <button class="form__button-submit" type="submit">登録</button>
+        <button class="form__button-submit" type="submit">登録する</button>
       </div>
     </form>
     <div class="auth__link">
-      <a class="auth__button-submit" href="/login">ログインの方はこちら</a>
+      <a class="auth__button-submit" href="/login">ログインはこちら</a>
     </div>
   </div>
 @endsection
