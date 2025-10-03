@@ -37,7 +37,7 @@
         <!-- 支払い方法 -->
         <div class="purchase__section">
           <h3 class="purchase__section-title">支払い方法</h3>
-          <select class="purchase__select" name="payment_method" id="paymentMethodSelect">
+          <select class="purchase__select" name="payment_method" id="payment-method-select">
             <option value="">選択してください</option>
             @foreach ($paymentMethods as $value => $label)
               <option value="{{ $value }}">{{ $label }}</option>
@@ -79,11 +79,11 @@
           </div>
           <div class="purchase__summary-item">
             <span class="purchase__summary-label">支払い方法</span>
-            <span class="purchase__summary-value" id="selectedPayment">選択してください</span>
+            <span class="purchase__summary-value" id="selected-payment">選択してください</span>
           </div>
         </div>
 
-        <button type="button" class="purchase__button" id="purchaseButton" {{ !$profile ? 'disabled' : '' }}
+        <button type="button" class="purchase__button" id="purchase-button" {{ !$profile ? 'disabled' : '' }}
           style="{{ !$profile ? 'opacity: 0.5;' : '' }}">
           購入する
         </button>
@@ -93,13 +93,13 @@
 
   <script>
     // 支払い方法の選択を注文サマリーに反映
-    document.getElementById('paymentMethodSelect').addEventListener('change', function() {
+    document.getElementById('payment-method-select').addEventListener('change', function() {
       const selectedOption = this.options[this.selectedIndex];
       const selectedText = selectedOption.text;
-      document.getElementById('selectedPayment').textContent = selectedText;
+      document.getElementById('selected-payment').textContent = selectedText;
 
       // 支払い方法が選択されているかチェック
-      const purchaseButton = document.getElementById('purchaseButton');
+      const purchaseButton = document.getElementById('purchase-button');
       if (this.value) {
         purchaseButton.disabled = false;
         purchaseButton.style.opacity = '1';
@@ -110,10 +110,10 @@
     });
 
     // 購入ボタンのクリックイベント
-    document.getElementById('purchaseButton').addEventListener('click', function(e) {
+    document.getElementById('purchase-button').addEventListener('click', function(e) {
       e.preventDefault();
 
-      const paymentMethod = document.getElementById('paymentMethodSelect').value;
+      const paymentMethod = document.getElementById('payment-method-select').value;
       if (!paymentMethod) {
         alert('支払い方法を選択してください');
         return;

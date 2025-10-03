@@ -39,7 +39,7 @@
       </div>
 
       <!-- 承認待ちタブ -->
-      <div id="pendingTab" class="tab-content active">
+      <div id="pending-tab" class="tab-content active">
         <div class="requests-card">
           <div class="table-header">
             <div class="header-cell">状態</div>
@@ -74,7 +74,7 @@
       </div>
 
       <!-- 承認済みタブ -->
-      <div id="approvedTab" class="tab-content">
+      <div id="approved-tab" class="tab-content">
         <div class="requests-card">
           <div class="table-header">
             <div class="header-cell">状態</div>
@@ -127,7 +127,7 @@
       event.target.classList.add('active');
 
       // 対応するタブコンテンツを表示
-      document.getElementById(tabName + 'Tab').classList.add('active');
+      document.getElementById(tabName + '-tab').classList.add('active');
     }
   </script>
 

@@ -34,7 +34,7 @@
       </div>
 
       <!-- 承認待ちタブ -->
-      <div id="pendingTab" class="tab-content active">
+      <div id="pending-tab" class="tab-content active">
         <div class="requests-table-container">
           @if (count($pendingRequests) > 0)
             <table class="requests-table">
@@ -76,7 +76,7 @@
       </div>
 
       <!-- 承認済みタブ -->
-      <div id="approvedTab" class="tab-content">
+      <div id="approved-tab" class="tab-content">
         <div class="requests-table-container">
           @if (count($approvedRequests) > 0)
             <table class="requests-table">
@@ -364,7 +364,7 @@
       event.target.classList.add('active');
 
       // 対応するタブコンテンツを表示
-      document.getElementById(tabName + 'Tab').classList.add('active');
+      document.getElementById(tabName + '-tab').classList.add('active');
     }
   </script>
 @endsection
