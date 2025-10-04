@@ -56,12 +56,12 @@
                 <div class="table-cell">
                   <span class="status-badge status-pending">承認待ち</span>
                 </div>
-                <div class="table-cell">{{ $request['attendance']['user']['name'] ?? '西伶奈' }}</div>
+                <div class="table-cell">{{ $user->name }}</div>
                 <div class="table-cell">{{ \Carbon\Carbon::parse($request['attendance']['date'])->format('Y/m/d') }}</div>
                 <div class="table-cell">{{ Str::limit($request['requested_remarks'], 20) ?: '遅延のため' }}</div>
                 <div class="table-cell">{{ \Carbon\Carbon::parse($request['created_at'])->format('Y/m/d') }}</div>
                 <div class="table-cell">
-                  <a href="{{ route('attendance.detail', $request['attendance_id']) }}" class="detail-link">詳細</a>
+                  <a href="{{ route('modification-requests.show', $request['id']) }}" class="detail-link">詳細</a>
                 </div>
               </div>
             @endforeach
@@ -91,13 +91,13 @@
                 <div class="table-cell">
                   <span class="status-badge status-approved">承認済み</span>
                 </div>
-                <div class="table-cell">{{ $request['attendance']['user']['name'] ?? '西伶奈' }}</div>
+                <div class="table-cell">{{ $user->name }}</div>
                 <div class="table-cell">{{ \Carbon\Carbon::parse($request['attendance']['date'])->format('Y/m/d') }}
                 </div>
                 <div class="table-cell">{{ Str::limit($request['requested_remarks'], 20) ?: '遅延のため' }}</div>
                 <div class="table-cell">{{ \Carbon\Carbon::parse($request['created_at'])->format('Y/m/d') }}</div>
                 <div class="table-cell">
-                  <a href="{{ route('attendance.detail', $request['attendance_id']) }}" class="detail-link">詳細</a>
+                  <a href="{{ route('modification-requests.show', $request['id']) }}" class="detail-link">詳細</a>
                 </div>
               </div>
             @endforeach
@@ -223,17 +223,20 @@
       font-weight: 700;
       font-size: 16px;
       line-height: 1.21;
-      color: #000000;
+      color: #737373;
       margin-right: 40px;
       padding-bottom: 8px;
-      transition: opacity 0.2s ease;
+      transition: all 0.2s ease;
+      position: relative;
     }
 
     .tab-button.active {
       color: #000000;
+      border-bottom: 3px solid #000000;
     }
 
-    .tab-button:hover {
+    .tab-button:not(.active):hover {
+      color: #000000;
       opacity: 0.8;
     }
 

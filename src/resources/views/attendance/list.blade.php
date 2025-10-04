@@ -77,17 +77,17 @@
             <div class="attendance-row">
               <div class="row-item date">
                 @php
-                  $date = \Carbon\Carbon::parse($attendance['date']);
-                  $dayOfWeek = $date->locale('ja')->dayName;
-                  $dayOfWeekShort = substr($dayOfWeek, 0, 1);
+                  $date = \Carbon\Carbon::parse($attendance['date'])->setTimezone('Asia/Tokyo');
+                  $dayOfWeekNames = ['日', '月', '火', '水', '木', '金', '土'];
+                  $dayOfWeekShort = $dayOfWeekNames[$date->dayOfWeek];
                 @endphp
                 {{ $date->format('m/d') }}({{ $dayOfWeekShort }})
               </div>
               <div class="row-item">
-                {{ $attendance['start_time'] ? \Carbon\Carbon::parse($attendance['start_time'])->format('H:i') : '-' }}
+                {{ $attendance['start_time'] ? \Carbon\Carbon::parse($attendance['start_time'])->setTimezone('Asia/Tokyo')->format('H:i') : '-' }}
               </div>
               <div class="row-item">
-                {{ $attendance['end_time'] ? \Carbon\Carbon::parse($attendance['end_time'])->format('H:i') : '-' }}
+                {{ $attendance['end_time'] ? \Carbon\Carbon::parse($attendance['end_time'])->setTimezone('Asia/Tokyo')->format('H:i') : '-' }}
               </div>
               <div class="row-item">
                 @php
@@ -95,8 +95,8 @@
                   if (isset($attendance['breaks']) && is_array($attendance['breaks'])) {
                       foreach ($attendance['breaks'] as $break) {
                           if (isset($break['start_time']) && isset($break['end_time'])) {
-                              $start = \Carbon\Carbon::parse($break['start_time']);
-                              $end = \Carbon\Carbon::parse($break['end_time']);
+                              $start = \Carbon\Carbon::parse($break['start_time'])->setTimezone('Asia/Tokyo');
+                              $end = \Carbon\Carbon::parse($break['end_time'])->setTimezone('Asia/Tokyo');
                               $totalBreakMinutes += $start->diffInMinutes($end);
                           }
                       }
@@ -109,8 +109,8 @@
               <div class="row-item">
                 @if ($attendance['start_time'] && $attendance['end_time'])
                   @php
-                    $start = \Carbon\Carbon::parse($attendance['start_time']);
-                    $end = \Carbon\Carbon::parse($attendance['end_time']);
+                    $start = \Carbon\Carbon::parse($attendance['start_time'])->setTimezone('Asia/Tokyo');
+                    $end = \Carbon\Carbon::parse($attendance['end_time'])->setTimezone('Asia/Tokyo');
                     $totalMinutes = $start->diffInMinutes($end) - $totalBreakMinutes;
                     $workHours = intval($totalMinutes / 60);
                     $workMins = $totalMinutes % 60;

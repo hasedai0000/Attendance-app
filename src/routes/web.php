@@ -67,6 +67,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // PG06 申請一覧画面（一般ユーザー）
     Route::get('/stamp_correction_request/list', [ModificationRequestController::class, 'index'])->name('modification-requests.index');
     Route::post('/stamp_correction_request/list', [ModificationRequestController::class, 'store'])->name('modification-requests.store');
+
+    // 申請詳細画面（一般ユーザー）
+    Route::get('/stamp_correction_request/{id}', [ModificationRequestController::class, 'show'])->name('modification-requests.show');
 });
 
 // 管理者専用ルート

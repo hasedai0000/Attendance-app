@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Application\Services\AttendanceService;
 use App\Application\Services\BreaksService;
+use App\Application\Services\ModificationRequestService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
@@ -14,13 +15,16 @@ class AttendanceController extends Controller
 {
     private AttendanceService $attendanceService;
     private BreaksService $breaksService;
+    private ModificationRequestService $modificationRequestService;
 
     public function __construct(
         AttendanceService $attendanceService,
-        BreaksService $breaksService
+        BreaksService $breaksService,
+        ModificationRequestService $modificationRequestService
     ) {
         $this->attendanceService = $attendanceService;
         $this->breaksService = $breaksService;
+        $this->modificationRequestService = $modificationRequestService;
     }
 
     /**
@@ -135,7 +139,6 @@ class AttendanceController extends Controller
 
         // 認証されたユーザーが管理者かどうかを判定
         if (Auth::user()->is_admin) {
-            dd($attendance);
             // 管理者の場合は管理者用ビューを返す
             return view('admin.attendance-detail', [
                 'attendance' => $attendance,
@@ -144,9 +147,13 @@ class AttendanceController extends Controller
             // 一般ユーザーの場合は一般ユーザー用ビューを返す
             $breaks = $this->breaksService->getBreaksByAttendance($id);
 
+            // 申請中の修正申請を取得
+            $modificationRequest = $this->modificationRequestService->getPendingRequestByAttendanceId($id);
+
             return view('attendance.detail', [
                 'attendance' => $attendance,
                 'breaks' => $breaks,
+                'modificationRequest' => $modificationRequest,
             ]);
         }
     }

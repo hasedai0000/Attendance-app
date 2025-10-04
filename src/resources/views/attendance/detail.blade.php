@@ -104,16 +104,16 @@
           </div>
       </div>
 
-      <!-- 修正ボタン -->
-      @if ($attendance->hasPendingModificationRequest ?? false)
-        <div class="pending-message">
-          ※承認待ちのため修正はできません
+      @if ($modificationRequest && $modificationRequest->status === 'pending')
+        <div class="notice-message">
+          *承認待ちのため修正はできません。
         </div>
       @else
         <div class="modify-button-container">
           <button class="modify-button" type="submit">修正</button>
         </div>
       @endif
+
       </form>
 
       <style>
@@ -501,6 +501,18 @@
           font-size: 18px;
           color: rgba(255, 0, 0, 0.5);
         }
+
+        .notice-message {
+          font-family: 'Inter', sans-serif;
+          font-weight: 800;
+          font-size: 18px;
+          line-height: 1.21;
+          letter-spacing: 0.15em;
+          color: rgba(255, 0, 0, 0.5);
+          text-align: right;
+          margin-bottom: 20px;
+        }
+
 
         /* レスポンシブデザイン */
         @media (max-width: 1200px) {

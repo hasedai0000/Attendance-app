@@ -39,6 +39,32 @@ class ModificationRequestController extends Controller
         return view('modification-requests.index', [
             'pendingRequests' => $pendingRequests,
             'approvedRequests' => $approvedRequests,
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * 修正申請詳細画面表示
+     */
+    public function show(string $id): View
+    {
+        $user = Auth::user();
+
+        // 申請詳細を取得
+        $modificationRequest = $this->modificationRequestService->getModificationRequestDetail($id);
+
+        if (!$modificationRequest) {
+            abort(404, '修正申請が見つかりません');
+        }
+
+        // ユーザーが自分の申請かどうかを確認
+        if ($modificationRequest->user_id !== $user->id) {
+            abort(403, 'この申請を閲覧する権限がありません');
+        }
+
+        return view('modification-requests.show', [
+            'modificationRequest' => $modificationRequest,
+            'user' => $user,
         ]);
     }
 

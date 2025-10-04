@@ -164,7 +164,7 @@ class AuthController extends Controller
 
                 // 管理者かどうかチェック
                 if (Auth::user()->is_admin) {
-                    return redirect()->intended('/admin');
+                    return redirect()->intended('/admin/attendance/list');
                 } else {
                     Auth::logout();
                     return redirect()->back()->withErrors(['email' => '管理者権限がありません']);
