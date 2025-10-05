@@ -260,6 +260,137 @@
     display: block;
 }
 
+/* レイアウトコンテナ */
+.admin-container,
+.attendance-container {
+    min-height: 100vh;
+    background-color: #f0eff2;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 40px 302px;
+    max-width: 1512px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.attendance-main {
+    flex: 1;
+    padding: 40px 306px;
+    max-width: 1512px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 勤怠詳細カード */
+.attendance-detail-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.detail-section {
+    padding: 30px 64px;
+    border-bottom: 2px solid #e1e1e1;
+}
+
+.detail-section:last-child {
+    border-bottom: none;
+}
+
+.section-content {
+    display: flex;
+    align-items: center;
+    gap: 64px;
+}
+
+.section-label {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.21;
+    letter-spacing: 0.15em;
+    color: #737373;
+    min-width: 90px;
+}
+
+.section-value {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.21;
+    letter-spacing: 0.15em;
+    color: #000000;
+    flex: 1;
+}
+
+.section-value .year {
+    margin-right: 8px;
+}
+
+/* アクションボタン */
+.action-button {
+    border: none;
+    border-radius: 5px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    line-height: 1.21;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.action-button-primary {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.action-button-secondary {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #e1e1e1;
+}
+
+.action-button-success {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.action-button-danger {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.action-button-small {
+    padding: 8px 24px;
+    font-size: 16px;
+}
+
+.action-button-medium {
+    padding: 11px 41px;
+    font-size: 22px;
+}
+
+.action-button-large {
+    padding: 14px 48px;
+    font-size: 24px;
+}
+
+.action-button:hover {
+    opacity: 0.8;
+}
+
+.action-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 40px;
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 1200px) {
     .attendance-nav {
@@ -268,6 +399,11 @@
 
     .nav-item {
         font-size: 18px;
+    }
+
+    .admin-content,
+    .attendance-main {
+        padding: 40px 20px;
     }
 }
 
@@ -301,6 +437,30 @@
 
     .tab-navigation {
         gap: 20px;
+    }
+
+    .admin-content,
+    .attendance-main {
+        padding: 20px 16px;
+    }
+
+    .detail-section {
+        padding: 20px 32px;
+    }
+
+    .section-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .section-label {
+        min-width: auto;
+    }
+
+    .action-button {
+        font-size: 18px;
+        padding: 10px 30px;
     }
 }
 

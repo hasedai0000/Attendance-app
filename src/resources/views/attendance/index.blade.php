@@ -76,15 +76,17 @@
         @endif
 
         @if ($currentStatus === 'working')
-          <form action="{{ route('attendance.start-break') }}" method="POST" class="break-form">
-            @csrf
-            <button type="submit" class="action-btn btn-start-break">休憩入</button>
-          </form>
+          <div class="working-buttons">
+            <form action="{{ route('attendance.end-work') }}" method="POST" class="end-work-form">
+              @csrf
+              <button type="submit" class="action-btn btn-end-work">退勤</button>
+            </form>
 
-          <form action="{{ route('attendance.end-work') }}" method="POST" class="end-work-form">
-            @csrf
-            <button type="submit" class="action-btn btn-end-work">退勤</button>
-          </form>
+            <form action="{{ route('attendance.start-break') }}" method="POST" class="break-form">
+              @csrf
+              <button type="submit" class="action-btn btn-start-break">休憩入</button>
+            </form>
+          </div>
         @endif
 
         @if ($currentStatus === 'on_break')
@@ -204,6 +206,16 @@
       gap: 20px;
     }
 
+    .working-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .working-buttons form {
+      display: inline-block;
+    }
+
     .action-btn {
       width: 221px;
       height: 77px;
@@ -229,8 +241,8 @@
     }
 
     .btn-start-break {
-      background-color: #000000;
-      color: #FFFFFF;
+      background-color: #ffffff;
+      color: #000000;
     }
 
     .btn-start-break:hover {
@@ -247,8 +259,8 @@
     }
 
     .btn-end-work {
-      background-color: #FFFFFF;
-      color: #000000;
+      background-color: #000000;
+      color: #ffffff;
     }
 
     .btn-end-work:hover {
@@ -340,6 +352,11 @@
         font-size: 28px;
       }
 
+      .working-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+
       .finished-message p {
         font-size: 22px;
       }
@@ -358,6 +375,11 @@
         width: 180px;
         height: 50px;
         font-size: 24px;
+      }
+
+      .working-buttons {
+        flex-direction: column;
+        gap: 12px;
       }
 
       .finished-message p {
