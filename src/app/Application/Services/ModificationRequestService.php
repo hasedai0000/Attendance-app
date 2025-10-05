@@ -13,12 +13,19 @@ use Illuminate\Support\Str;
 
 class ModificationRequestService
 {
-  public function __construct(
-    private ModificationRequestInterface $modificationRequestRepository,
-    private AttendanceRepositoryInterface $attendanceRepository,
-    private ModificationRequestBreaksInterface $modificationRequestBreaksRepository
-  ) {}
+  private $modificationRequestRepository;
+  private $attendanceRepository;
+  private $modificationRequestBreaksRepository;
 
+  public function __construct(
+    ModificationRequestInterface $modificationRequestRepository,
+    AttendanceRepositoryInterface $attendanceRepository,
+    ModificationRequestBreaksInterface $modificationRequestBreaksRepository
+  ) {
+    $this->modificationRequestRepository = $modificationRequestRepository;
+    $this->attendanceRepository = $attendanceRepository;
+    $this->modificationRequestBreaksRepository = $modificationRequestBreaksRepository;
+  }
   /**
    * 修正申請を作成
    */
@@ -112,9 +119,11 @@ class ModificationRequestService
     // 勤怠記録を更新
     $updateData = [];
     if ($modificationRequest->requested_start_time) {
+      // requested_start_timeは既にdatetime形式なので、そのまま使用
       $updateData['start_time'] = $modificationRequest->requested_start_time;
     }
     if ($modificationRequest->requested_end_time) {
+      // requested_end_timeは既にdatetime形式なので、そのまま使用
       $updateData['end_time'] = $modificationRequest->requested_end_time;
     }
     if ($modificationRequest->requested_remarks) {
@@ -125,6 +134,21 @@ class ModificationRequestService
       $this->attendanceRepository->update($modificationRequest->attendance_id, $updateData);
     }
 
+    // 休憩時間の修正申請も処理
+    $modificationRequestBreaks = $modificationRequest->modificationRequestBreaks;
+    if ($modificationRequestBreaks && $modificationRequestBreaks->count() > 0) {
+      // 既存の休憩時間を削除
+      \App\Models\Breaks::where('attendance_id', $modificationRequest->attendance_id)->delete();
+      
+      // 新しい休憩時間を作成
+      foreach ($modificationRequestBreaks as $breakRequest) {
+        \App\Models\Breaks::create([
+          'attendance_id' => $modificationRequest->attendance_id,
+          'start_time' => $breakRequest->requested_start_time,
+          'end_time' => $breakRequest->requested_end_time,
+        ]);
+      }
+    }
     // 修正申請を承認済みに更新
     $modificationRequest->update([
       'status' => 'approved',
@@ -136,6 +160,26 @@ class ModificationRequestService
   }
 
   /**
+   * 修正申請を却下
+   */
+  public function rejectModificationRequest(string $modificationRequestId): ModificationRequestModel
+  {
+    $modificationRequest = ModificationRequestModel::findOrFail($modificationRequestId);
+
+    if ($modificationRequest->status !== 'pending') {
+      throw new \DomainException('承認待ちの修正申請のみ却下できます');
+    }
+
+    // 修正申請を却下済みに更新
+    $modificationRequest->update([
+      'status' => 'rejected',
+      'approved_by' => Auth::id(),
+      'approved_at' => now(),
+    ]);
+
+    return $modificationRequest;
+  }
+  /**
    * 修正申請詳細を取得
    */
   public function getModificationRequestDetail(string $id): ?ModificationRequestModel
@@ -144,7 +188,25 @@ class ModificationRequestService
       ->find($id);
   }
 
+  /**
+   * 修正申請をIDで取得（管理者用）
+   */
+  public function getModificationRequestById(string $id): ?ModificationRequestModel
+  {
+    return ModificationRequestModel::with(["attendance.user", "user", "attendance.breaks", "modificationRequestBreaks"])
+      ->find($id);
+  }
   // 既存のメソッドも残しておく（互換性のため）
+
+  /**
+   * 勤怠IDに基づいて申請中の修正申請を取得
+   */
+  public function getPendingRequestByAttendanceId(string $attendanceId): ?ModificationRequestModel
+  {
+    return ModificationRequestModel::where('attendance_id', $attendanceId)
+      ->where('status', 'pending')
+      ->first();
+  }
   public function createModificationRequest(array $data): ModificationRequest
   {
     $userId = Auth::id();

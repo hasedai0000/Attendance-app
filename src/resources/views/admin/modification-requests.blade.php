@@ -55,12 +55,14 @@
                       <span class="status-badge status-pending">承認待ち</span>
                     </td>
                     <td class="name-cell">{{ $request['user']['name'] }}</td>
-                    <td class="date-cell">{{ \Carbon\Carbon::parse($request['attendance']['date'])->format('Y/m/d') }}
+                    <td class="date-cell">
+                      {{ \Carbon\Carbon::parse($request['attendance']['date'])->setTimezone('Asia/Tokyo')->format('Y/m/d') }}
                     </td>
                     <td class="reason-cell">{{ Str::limit($request['requested_remarks'], 20) }}</td>
-                    <td class="date-cell">{{ \Carbon\Carbon::parse($request['created_at'])->format('Y/m/d') }}</td>
+                    <td class="date-cell">
+                      {{ \Carbon\Carbon::parse($request['created_at'])->setTimezone('Asia/Tokyo')->format('Y/m/d') }}</td>
                     <td class="detail-cell">
-                      <a href="{{ route('admin.attendance.detail', $request['attendance_id']) }}"
+                      <a href="{{ route('admin.modification-requests.detail', $request['id']) }}"
                         class="detail-link">詳細</a>
                     </td>
                   </tr>
@@ -97,12 +99,15 @@
                       <span class="status-badge status-approved">承認済み</span>
                     </td>
                     <td class="name-cell">{{ $request['user']['name'] }}</td>
-                    <td class="date-cell">{{ \Carbon\Carbon::parse($request['attendance']['date'])->format('Y/m/d') }}
+                    <td class="date-cell">
+                      {{ \Carbon\Carbon::parse($request['attendance']['date'])->setTimezone('Asia/Tokyo')->format('Y/m/d') }}
                     </td>
                     <td class="reason-cell">{{ Str::limit($request['requested_remarks'], 20) }}</td>
-                    <td class="date-cell">{{ \Carbon\Carbon::parse($request['created_at'])->format('Y/m/d') }}</td>
+                    <td class="date-cell">
+                      {{ \Carbon\Carbon::parse($request['created_at'])->setTimezone('Asia/Tokyo')->format('Y/m/d') }}
+                    </td>
                     <td class="detail-cell">
-                      <a href="{{ route('admin.attendance.detail', $request['attendance_id']) }}"
+                      <a href="{{ route('admin.modification-requests.detail', $request['id']) }}"
                         class="detail-link">詳細</a>
                     </td>
                   </tr>

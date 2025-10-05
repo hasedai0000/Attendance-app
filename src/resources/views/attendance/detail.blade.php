@@ -2,41 +2,21 @@
 
 @section('title', '勤怠詳細')
 
+@section('css')
+  <link rel="stylesheet" href="{{ asset('css/components.css') }}">
+@endsection
+
 @section('content')
   <div class="attendance-detail-container">
     <!-- ヘッダー -->
-    <div class="attendance-header">
-      <img src="{{ asset('images/coachtech-logo.svg') }}" alt="CoachTech" class="logo">
-      <nav class="attendance-nav">
-        <a href="{{ route('attendance.index') }}" class="nav-item">勤怠</a>
-        <a href="{{ route('attendance.list') }}" class="nav-item active">勤怠一覧</a>
-        <a href="{{ route('modification-requests.index') }}" class="nav-item">申請</a>
-        <form method="POST" action="{{ route('logout') }}">
-          @csrf
-          <button type="submit" class="nav-item">ログアウト</button>
-        </form>
-      </nav>
-    </div>
+    <x-attendance.header active-page="list" />
 
     <!-- メインコンテンツ -->
     <div class="attendance-main">
-      @if (session('message'))
-        <div class="message message-success">
-          {{ session('message') }}
-        </div>
-      @endif
-
-      @if (session('error'))
-        <div class="message message-error">
-          {{ session('error') }}
-        </div>
-      @endif
+      <x-common.messages />
 
       <!-- タイトル -->
-      <div class="page-title">
-        <div class="title-line"></div>
-        <h1>勤怠詳細</h1>
-      </div>
+      <x-common.page-title title="勤怠詳細" />
 
       <!-- 勤怠詳細カード -->
       <div class="attendance-detail-card">

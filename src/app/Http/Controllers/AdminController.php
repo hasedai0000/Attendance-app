@@ -138,6 +138,9 @@ class AdminController extends Controller
                 'start_time' => 'nullable|date_format:H:i',
                 'end_time' => 'nullable|date_format:H:i|after:start_time',
                 'remarks' => 'required|string|max:1000',
+                'breaks' => 'nullable|array',
+                'breaks.*.start_time' => 'nullable|date_format:H:i',
+                'breaks.*.end_time' => 'nullable|date_format:H:i|after:breaks.*.start_time',
             ], [
                 'start_time.date_format' => '出勤時間は正しい時刻形式で入力してください',
                 'end_time.date_format' => '退勤時間は正しい時刻形式で入力してください',
@@ -145,6 +148,10 @@ class AdminController extends Controller
                 'remarks.required' => '備考を記入してください',
                 'remarks.string' => '備考は文字列で入力してください',
                 'remarks.max' => '備考は1000文字以内で入力してください',
+                'breaks.array' => '休憩時間は配列形式で入力してください',
+                'breaks.*.start_time.date_format' => '休憩開始時間は正しい時刻形式で入力してください',
+                'breaks.*.end_time.date_format' => '休憩終了時間は正しい時刻形式で入力してください',
+                'breaks.*.end_time.after' => '休憩終了時間は休憩開始時間より後である必要があります',
             ]);
 
             $updateData = [
@@ -159,6 +166,11 @@ class AdminController extends Controller
             }
 
             $this->attendanceService->updateAttendance($attendanceId, $updateData);
+
+            // 休憩時間の更新処理
+            if ($request->has('breaks') && is_array($request->breaks)) {
+                $this->attendanceService->updateBreaks($attendanceId, $request->breaks);
+            }
 
             return redirect()->back()->with('message', '勤怠情報を修正しました');
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -214,6 +226,26 @@ class AdminController extends Controller
             return redirect()->back()->with('message', '修正申請を却下しました');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '却下に失敗しました: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * 修正申請詳細画面（管理者）
+     */
+    public function modificationRequestDetail(string $requestId): View
+    {
+        try {
+            $modificationRequest = $this->modificationRequestService->getModificationRequestById($requestId);
+
+            if (!$modificationRequest) {
+                abort(404, '修正申請が見つかりません');
+            }
+
+            return view('admin.modification-request-detail', [
+                'modificationRequest' => $modificationRequest,
+            ]);
+        } catch (\Exception $e) {
+            abort(404, '修正申請の取得に失敗しました: ' . $e->getMessage());
         }
     }
 

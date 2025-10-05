@@ -155,6 +155,26 @@ class AttendanceService
   }
 
   /**
+   * 休憩時間を更新
+   */
+  public function updateBreaks(string $attendanceId, array $breaksData): void
+  {
+    // 既存の休憩時間を削除
+    \App\Models\Breaks::where('attendance_id', $attendanceId)->delete();
+
+    // 新しい休憩時間を作成
+    foreach ($breaksData as $breakData) {
+      if (!empty($breakData['start_time']) && !empty($breakData['end_time'])) {
+        \App\Models\Breaks::create([
+          'attendance_id' => $attendanceId,
+          'start_time' => $breakData['start_time'],
+          'end_time' => $breakData['end_time'],
+        ]);
+      }
+    }
+  }
+
+  /**
    * ステータスを日本語に変換
    */
   public function getStatusLabel(string $status): string

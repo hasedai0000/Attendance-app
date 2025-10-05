@@ -13,4 +13,5 @@ interface AttendanceRepositoryInterface
     public function findByUserAndDate(string $userId, Carbon $date): ?Attendance;
     public function findByUserAndDateRange(string $userId, Carbon $startDate, Carbon $endDate): array;
     public function findAll(string $searchTerm): array;
+    public function findByDate(Carbon $date): array;
 }

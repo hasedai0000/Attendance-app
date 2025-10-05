@@ -93,8 +93,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // PG12 申請一覧画面（管理者） - 一般ユーザーと同じパスを使用
     Route::get('/admin/stamp_correction_request/list', [AdminController::class, 'modificationRequests'])->name('admin.modification-requests.index');
 
+    // 申請詳細画面（管理者）
+    
+    Route::get('/admin/stamp_correction_request/{id}', [AdminController::class, 'modificationRequestDetail'])->name('admin.modification-requests.detail');
+
     // PG13 修正申請承認画面（管理者）
     Route::post('/stamp_correction_request/approve/{requestId}', [AdminController::class, 'approveModificationRequest'])->name('admin.modification-requests.approve');
+
+    // 修正申請却下（管理者）
+    Route::post('/stamp_correction_request/reject/{requestId}', [AdminController::class, 'rejectModificationRequest'])->name('admin.modification-requests.reject');
 
     // CSV出力
     Route::get('/admin/staff/{userId}/attendance/csv', [AdminController::class, 'exportCsv'])->name('admin.staff.attendance.csv');

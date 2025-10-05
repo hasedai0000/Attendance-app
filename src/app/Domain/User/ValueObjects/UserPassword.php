@@ -2,50 +2,16 @@
 
 namespace App\Domain\User\ValueObjects;
 
-class UserPassword
+use App\Domain\Common\ValueObjects\BaseValueObject;
+use App\Domain\Common\ValueObjects\Traits\ValidationTrait;
+
+class UserPassword extends BaseValueObject
 {
-    private string $value;
+    use ValidationTrait;
 
-    public function __construct(string $value)
+    protected function validate($value): void
     {
-        $this->validatePassword($value);
-        $this->value = $value;
-    }
-
-    private function validatePassword(string $value): void
-    {
-        if (empty(trim($value))) {
-            throw new \DomainException('パスワードを入力してください');
-        }
-
-        if (mb_strlen($value) < 8) {
-            throw new \DomainException('パスワードは8文字以上で入力してください');
-        }
-    }
-
-    public function value(): string
-    {
-        return $this->value;
-    }
-
-    public function isEmpty(): bool
-    {
-        return empty($this->value);
-    }
-
-    /**
-     * 値オブジェクトの比較（同値性）
-     */
-    public function equals(self $other): bool
-    {
-        return $this->value === $other->value;
-    }
-
-    /**
-     * 文字列としても利用可能
-     */
-    public function __toString(): string
-    {
-        return $this->value;
+        $this->validateNotEmpty($value, 'パスワード');
+        $this->validateMinLength($value, 8, 'パスワード');
     }
 }
