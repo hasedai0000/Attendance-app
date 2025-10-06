@@ -91,20 +91,29 @@
 /* 月間ナビゲーション */
 .month-navigation {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 20px;
     margin-bottom: 40px;
+    background-color: #fff;
+    padding: 18px;
+    border-radius: 10px;
 }
 
 .nav-arrow {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 15px;
+    gap: 8px;
     text-decoration: none;
     transition: opacity 0.2s ease;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.21;
+    color: #737373;
+    padding: 8px 12px;
+    border-radius: 5px;
 }
 
 .nav-arrow:hover {
@@ -112,8 +121,9 @@
 }
 
 .arrow-icon {
-    width: 100%;
-    height: 100%;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
 }
 
 .current-month {
@@ -147,7 +157,7 @@
 
 .table-header th {
     padding: 15px 36px;
-    text-align: left;
+    text-align: center;
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 16px;
@@ -172,6 +182,7 @@
     line-height: 1.21;
     letter-spacing: 0.15em;
     color: #737373;
+    text-align: center;
 }
 
 .date-cell {
@@ -271,16 +282,16 @@
 
 .admin-content {
     flex: 1;
-    padding: 40px 302px;
-    max-width: 1512px;
+    padding: 40px 20px;
+    max-width: 900px;
     margin: 0 auto;
     width: 100%;
 }
 
 .attendance-main {
     flex: 1;
-    padding: 40px 306px;
-    max-width: 1512px;
+    padding: 40px 20px;
+    max-width: 900px;
     margin: 0 auto;
     width: 100%;
 }
@@ -403,7 +414,7 @@
 
     .admin-content,
     .attendance-main {
-        padding: 40px 20px;
+        padding: 40px 0px;
     }
 }
 
