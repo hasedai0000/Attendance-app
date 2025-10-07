@@ -218,7 +218,7 @@
 
     .table-header th {
       padding: 15px 36px;
-      text-align: left;
+      text-align: center;
       font-family: 'Inter', sans-serif;
       font-weight: 700;
       font-size: 16px;

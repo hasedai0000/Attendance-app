@@ -34,7 +34,8 @@
               {{ \Carbon\Carbon::parse($request['created_at'])->setTimezone('Asia/Tokyo')->format('Y/m/d') }}
             </td>
             <td class="detail-cell">
-              <a href="{{ route('modification-requests.show', $request['id']) }}" class="detail-link">詳細</a>
+              <a href="{{ Auth::user()->is_admin ? route('admin.modification-requests.detail', $request['id']) : route('modification-requests.show', $request['id']) }}"
+                class="detail-link">詳細</a>
             </td>
           </tr>
         @endforeach

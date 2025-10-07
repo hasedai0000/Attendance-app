@@ -178,6 +178,7 @@
     }
 
     .modification-request-detail-card {
+      width: 900px;
       background-color: #FFFFFF;
       border-radius: 10px;
       overflow: hidden;

@@ -94,7 +94,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/stamp_correction_request/list', [AdminController::class, 'modificationRequests'])->name('admin.modification-requests.index');
 
     // 申請詳細画面（管理者）
-    
     Route::get('/admin/stamp_correction_request/{id}', [AdminController::class, 'modificationRequestDetail'])->name('admin.modification-requests.detail');
 
     // PG13 修正申請承認画面（管理者）
