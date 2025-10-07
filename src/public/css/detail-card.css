@@ -1,0 +1,134 @@
+/* 詳細カード共通スタイル */
+
+/* 詳細カードコンテナ */
+.detail-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+/* 詳細行 */
+.detail-row {
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 2px solid #e1e1e1;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+/* 詳細ラベル */
+.detail-label {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.21;
+    color: #737373;
+    min-width: 120px;
+    margin-right: 20px;
+}
+
+/* 詳細値 */
+.detail-value {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.21;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.detail-value .year {
+    margin-right: 8px;
+}
+
+/* 時間表示 */
+.time-display {
+    background-color: #ffffff;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    padding: 4px 8px;
+    min-width: 103px;
+    height: 29px;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* セパレーター */
+.separator {
+    margin: 0 8px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+}
+
+/* 備考テキストエリア */
+.remarks-textarea {
+    background-color: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-height: 72px;
+    width: 316px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #000000;
+    resize: vertical;
+}
+
+.remarks-textarea:focus {
+    outline: none;
+    border-color: #000000;
+}
+
+/* 注意メッセージ */
+.notice-message {
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 1.21;
+    letter-spacing: 0.15em;
+    color: rgba(255, 0, 0, 0.5);
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+/* アクションボタンコンテナ */
+.action-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 40px;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .detail-card {
+        padding: 20px;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .detail-label {
+        min-width: auto;
+        margin-right: 0;
+    }
+}

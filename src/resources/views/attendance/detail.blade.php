@@ -1,6 +1,10 @@
 <x-common.attendance-layout title="勤怠詳細" active-page="list">
+  @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/detail-card.css') }}">
+  @endpush
+
   <!-- 勤怠詳細カード -->
-  <div class="attendance-detail-card">
+  <div class="detail-card">
     <!-- 名前 -->
     <div class="detail-row">
       <div class="detail-label">名前</div>
@@ -78,123 +82,3 @@
   </form>
   </div>
 </x-common.attendance-layout>
-
-<style>
-  .attendance-detail-card {
-    background-color: #FFFFFF;
-    border-radius: 10px;
-    padding: 40px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
-  }
-
-  .detail-row {
-    display: flex;
-    align-items: center;
-    padding: 20px 0;
-    border-bottom: 2px solid #E1E1E1;
-  }
-
-  .detail-row:last-child {
-    border-bottom: none;
-  }
-
-  .detail-label {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 1.21;
-    color: #737373;
-    min-width: 120px;
-    margin-right: 20px;
-  }
-
-  .detail-value {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 1.21;
-    color: #000000;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-  }
-
-  .detail-value .year {
-    margin-right: 8px;
-  }
-
-  .time-display {
-    background-color: #FFFFFF;
-    border: 1px solid #E1E1E1;
-    border-radius: 4px;
-    padding: 4px 8px;
-    min-width: 103px;
-    height: 29px;
-    text-align: center;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: #000000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .detail-value .separator {
-    margin: 0 8px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: #000000;
-  }
-
-  .remarks-textarea {
-    background-color: #FFFFFF;
-    border: 1px solid #D9D9D9;
-    border-radius: 4px;
-    padding: 8px 12px;
-    min-height: 72px;
-    width: 316px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    color: #000000;
-    resize: vertical;
-  }
-
-  .remarks-textarea:focus {
-    outline: none;
-    border-color: #000000;
-  }
-
-  .notice-message {
-    font-family: 'Inter', sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    line-height: 1.21;
-    letter-spacing: 0.15em;
-    color: rgba(255, 0, 0, 0.5);
-    text-align: right;
-    margin-bottom: 20px;
-  }
-
-  /* レスポンシブデザイン */
-  @media (max-width: 768px) {
-    .attendance-detail-card {
-      padding: 20px;
-    }
-
-    .detail-row {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .detail-label {
-      min-width: auto;
-      margin-right: 0;
-    }
-  }
-</style>

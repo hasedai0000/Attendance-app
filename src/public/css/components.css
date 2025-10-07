@@ -156,7 +156,7 @@
 }
 
 .table-header th {
-    padding: 15px 36px;
+    padding: 15px 10px;
     text-align: center;
     font-family: "Inter", sans-serif;
     font-weight: 700;
@@ -175,7 +175,7 @@
 }
 
 .table-row td {
-    padding: 15px 36px;
+    padding: 15px 10px;
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 16px;
@@ -214,24 +214,6 @@
     font-size: 16px;
 }
 
-/* ステータスバッジ */
-.status-badge {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.status-pending {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.status-approved {
-    background-color: #d4edda;
-    color: #155724;
-}
-
 /* タブナビゲーション */
 .tab-navigation {
     display: flex;
@@ -246,13 +228,13 @@
     border: none;
     cursor: pointer;
     font-family: "Inter", sans-serif;
-    font-weight: 700;
+    font-weight: 400;
     font-size: 16px;
     line-height: 1.21;
     letter-spacing: 0.15em;
-    color: #000000;
+    color: #737373;
     padding: 0;
-    transition: opacity 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .tab-button:hover {
@@ -261,6 +243,7 @@
 
 .tab-button.active {
     color: #000000;
+    font-weight: 700;
 }
 
 .tab-content {
@@ -296,7 +279,7 @@
     width: 100%;
 }
 
-/* 勤怠詳細カード */
+/* 勤怠詳細カード（コンポーネント用） */
 .attendance-detail-card {
     background-color: #ffffff;
     border-radius: 10px;

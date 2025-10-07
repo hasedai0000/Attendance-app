@@ -62,7 +62,7 @@ class ModificationRequestService
   {
     return ModificationRequestModel::where('user_id', $userId)
       ->where('status', 'pending')
-      ->with(['attendance'])
+      ->with(['attendance', 'user'])
       ->orderBy('created_at', 'desc')
       ->get()
       ->toArray();
@@ -75,7 +75,7 @@ class ModificationRequestService
   {
     return ModificationRequestModel::where('user_id', $userId)
       ->where('status', 'approved')
-      ->with(['attendance'])
+      ->with(['attendance', 'user'])
       ->orderBy('created_at', 'desc')
       ->get()
       ->toArray();

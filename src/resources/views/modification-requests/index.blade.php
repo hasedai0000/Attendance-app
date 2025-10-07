@@ -15,7 +15,7 @@
           })
           ->toArray();
     @endphp
-    <x-common.requests-table :requests="$pendingRequestsWithStatus" />
+    <x-common.requests-table :requests="$pendingRequestsWithStatus" :show-user="true" />
   </div>
 
   <!-- 承認済みタブ -->
@@ -28,6 +28,6 @@
           })
           ->toArray();
     @endphp
-    <x-common.requests-table :requests="$approvedRequestsWithStatus" />
+    <x-common.requests-table :requests="$approvedRequestsWithStatus" :show-user="true" />
   </div>
 </x-common.attendance-layout>
