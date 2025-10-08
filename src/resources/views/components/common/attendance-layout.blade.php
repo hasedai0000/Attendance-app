@@ -12,7 +12,11 @@
 @section('content')
   <div class="attendance-container">
     <!-- ヘッダー -->
-    <x-attendance.header :active-page="$activePage" />
+    @if (Auth::check() && Auth::user()->is_admin)
+      <x-admin.header :active-page="$activePage" />
+    @else
+      <x-attendance.header :active-page="$activePage" />
+    @endif
 
     <!-- メインコンテンツ -->
     <div class="attendance-main">

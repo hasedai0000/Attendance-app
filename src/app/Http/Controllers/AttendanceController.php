@@ -136,25 +136,16 @@ class AttendanceController extends Controller
         if (!$attendance) {
             abort(404, '勤怠情報が見つかりません');
         }
+        // 一般ユーザーの場合は一般ユーザー用ビューを返す
+        $breaks = $this->breaksService->getBreaksByAttendance($id);
 
-        // 認証されたユーザーが管理者かどうかを判定
-        if (Auth::user()->is_admin) {
-            // 管理者の場合は管理者用ビューを返す
-            return view('admin.attendance-detail', [
-                'attendance' => $attendance,
-            ]);
-        } else {
-            // 一般ユーザーの場合は一般ユーザー用ビューを返す
-            $breaks = $this->breaksService->getBreaksByAttendance($id);
+        // 申請中の修正申請を取得
+        $modificationRequest = $this->modificationRequestService->getPendingRequestByAttendanceId($id);
 
-            // 申請中の修正申請を取得
-            $modificationRequest = $this->modificationRequestService->getPendingRequestByAttendanceId($id);
-
-            return view('attendance.detail', [
-                'attendance' => $attendance,
-                'breaks' => $breaks,
-                'modificationRequest' => $modificationRequest,
-            ]);
-        }
+        return view('attendance.detail', [
+            'attendance' => $attendance,
+            'breaks' => $breaks,
+            'modificationRequest' => $modificationRequest,
+        ]);
     }
 }
