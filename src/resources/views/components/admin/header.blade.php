@@ -6,7 +6,7 @@
     <a href="{{ route('admin.attendance.daily') }}"
       class="nav-item {{ $activePage === 'attendance' ? 'active' : '' }}">勤怠一覧</a>
     <a href="{{ route('admin.staff.list') }}" class="nav-item {{ $activePage === 'staff' ? 'active' : '' }}">スタッフ一覧</a>
-    <a href="{{ route('admin.modification-requests.index') }}"
+    <a href="{{ route('modification-requests.index') }}"
       class="nav-item {{ $activePage === 'requests' ? 'active' : '' }}">申請一覧</a>
     <form method="POST" action="{{ route('logout') }}">
       @csrf

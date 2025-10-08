@@ -95,7 +95,7 @@
                 <td class="time-cell">{{ $breakTime }}</td>
                 <td class="time-cell">{{ $workTime }}</td>
                 <td class="detail-cell">
-                  <a href="{{ route('admin.attendance.detail', $attendance['id']) }}" class="detail-link">詳細</a>
+                  <a href="{{ route('attendance.detail', $attendance['id']) }}" class="detail-link">詳細</a>
                 </td>
               </tr>
             @empty

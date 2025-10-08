@@ -28,18 +28,24 @@ class ModificationRequestController extends Controller
      */
     public function index(): View
     {
-        $user = Auth::user();
+        // 認証されたユーザーが管理者かどうかを判定
+        if (Auth::user()->is_admin) {
+            // 承認待ちの申請を取得
+            $pendingRequests = $this->modificationRequestService->getPendingModificationRequests();
+            // 承認済みの申請を取得
+            $approvedRequests = $this->modificationRequestService->getApprovedModificationRequests();
+        } else {
+            $user = Auth::user();
+            // 承認待ちの申請を取得
+            $pendingRequests = $this->modificationRequestService->getPendingRequestsByUser($user->id);
 
-        // 承認待ちの申請を取得
-        $pendingRequests = $this->modificationRequestService->getPendingRequestsByUser($user->id);
-
-        // 承認済みの申請を取得
-        $approvedRequests = $this->modificationRequestService->getApprovedRequestsByUser($user->id);
+            // 承認済みの申請を取得
+            $approvedRequests = $this->modificationRequestService->getApprovedRequestsByUser($user->id);
+        }
 
         return view('modification-requests.index', [
             'pendingRequests' => $pendingRequests,
             'approvedRequests' => $approvedRequests,
-            'user' => $user,
         ]);
     }
 
