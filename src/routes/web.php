@@ -74,8 +74,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/staff/list', [AdminController::class, 'staffList'])->name('admin.staff.list');
     // PG11 スタッフ別勤怠一覧画面（管理者）
     Route::get('/admin/attendance/staff/{id}', [AdminController::class, 'staffAttendance'])->name('admin.staff.attendance');
-    // 勤怠詳細修正（管理者）
-    Route::put('/admin/attendance/{id}', [AdminController::class, 'updateAttendance'])->name('admin.attendance.update');
     // 申請詳細画面（管理者）
     Route::get('/admin/stamp_correction_request/{id}', [AdminController::class, 'modificationRequestDetail'])->name('admin.modification-requests.detail');
     // PG13 修正申請承認画面（管理者）

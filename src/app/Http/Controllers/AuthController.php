@@ -80,22 +80,6 @@ class AuthController extends Controller
             return redirect()->back()->withErrors($e->errors());
         }
     }
-
-    /**
-     * パスワードリセット画面表示（メール送信フォーム）
-     */
-    public function showForgotPassword(): View
-    {
-        return view('auth.forgot-password');
-    }
-
-    /**
-     * パスワードリセットメール送信
-     */
-    public function sendResetLink(Request $request): RedirectResponse
-    {
-        $request->validate(['email' => 'required|email']);
-
         $status = Password::sendResetLink(
             $request->only('email')
         );
@@ -103,7 +87,6 @@ class AuthController extends Controller
         return $status === Password::RESET_LINK_SENT
             ? back()->with(['status' => __($status)])
             : back()->withErrors(['email' => __($status)]);
-    }
 
     /**
      * メール認証確認画面表示

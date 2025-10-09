@@ -8,7 +8,6 @@ use App\Application\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -109,78 +108,6 @@ class AdminController extends Controller
     }
 
     /**
-     * 勤怠詳細画面（管理者）
-     */
-    public function attendanceDetail(string $attendanceId): View
-    {
-        try {
-            $attendance = $this->attendanceService->getAttendanceDetail($attendanceId);
-
-            if (!$attendance) {
-                abort(404, '勤怠情報が見つかりません');
-            }
-
-            return view('admin.attendance-detail', [
-                'attendance' => $attendance,
-            ]);
-        } catch (\Exception $e) {
-            abort(404, '勤怠情報の取得に失敗しました: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * 勤怠情報修正（管理者）
-     */
-    public function updateAttendance(Request $request, string $attendanceId): RedirectResponse
-    {
-        try {
-            $request->validate([
-                'start_time' => 'nullable|date_format:H:i',
-                'end_time' => 'nullable|date_format:H:i|after:start_time',
-                'remarks' => 'required|string|max:1000',
-                'breaks' => 'nullable|array',
-                'breaks.*.start_time' => 'nullable|date_format:H:i',
-                'breaks.*.end_time' => 'nullable|date_format:H:i|after:breaks.*.start_time',
-            ], [
-                'start_time.date_format' => '出勤時間は正しい時刻形式で入力してください',
-                'end_time.date_format' => '退勤時間は正しい時刻形式で入力してください',
-                'end_time.after' => '出勤時間もしくは退勤時間が不適切な値です',
-                'remarks.required' => '備考を記入してください',
-                'remarks.string' => '備考は文字列で入力してください',
-                'remarks.max' => '備考は1000文字以内で入力してください',
-                'breaks.array' => '休憩時間は配列形式で入力してください',
-                'breaks.*.start_time.date_format' => '休憩開始時間は正しい時刻形式で入力してください',
-                'breaks.*.end_time.date_format' => '休憩終了時間は正しい時刻形式で入力してください',
-                'breaks.*.end_time.after' => '休憩終了時間は休憩開始時間より後である必要があります',
-            ]);
-
-            $updateData = [
-                'remarks' => $request->remarks,
-            ];
-
-            if ($request->start_time) {
-                $updateData['start_time'] = $request->start_time;
-            }
-            if ($request->end_time) {
-                $updateData['end_time'] = $request->end_time;
-            }
-
-            $this->attendanceService->updateAttendance($attendanceId, $updateData);
-
-            // 休憩時間の更新処理
-            if ($request->has('breaks') && is_array($request->breaks)) {
-                $this->attendanceService->updateBreaks($attendanceId, $request->breaks);
-            }
-
-            return redirect()->back()->with('message', '勤怠情報を修正しました');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', '修正に失敗しました: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * 修正申請一覧（管理者）
      */
     public function modificationRequests(): View
@@ -212,20 +139,6 @@ class AdminController extends Controller
             return redirect()->back()->with('message', '修正申請を承認しました');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', '承認に失敗しました: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * 修正申請却下
-     */
-    public function rejectModificationRequest(string $requestId): RedirectResponse
-    {
-        try {
-            $this->modificationRequestService->rejectModificationRequest($requestId);
-
-            return redirect()->back()->with('message', '修正申請を却下しました');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', '却下に失敗しました: ' . $e->getMessage());
         }
     }
 
