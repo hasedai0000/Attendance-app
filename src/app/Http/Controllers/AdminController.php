@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Application\Services\AttendanceService;
 use App\Application\Services\ModificationRequestService;
 use App\Application\Services\UserService;
+use App\Http\Requests\AdminAttendanceUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
@@ -159,6 +160,38 @@ class AdminController extends Controller
             ]);
         } catch (\Exception $e) {
             abort(404, '修正申請の取得に失敗しました: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * 勤怠情報を直接更新
+     */
+    public function updateAttendance(AdminAttendanceUpdateRequest $request, string $id): RedirectResponse
+    {
+        try {
+            $attendance = $this->attendanceService->getAttendanceDetail($id);
+
+            if (!$attendance) {
+                abort(404, '勤怠記録が見つかりません');
+            }
+
+            // 勤怠情報を更新
+            $updateData = [
+                'start_time' => $request->input('start_time') ? Carbon::createFromFormat('H:i', $request->input('start_time'))->setDateFrom($attendance->date) : null,
+                'end_time' => $request->input('end_time') ? Carbon::createFromFormat('H:i', $request->input('end_time'))->setDateFrom($attendance->date) : null,
+                'remarks' => $request->input('remarks'),
+            ];
+
+            $this->attendanceService->updateAttendance($id, $updateData);
+
+            // 休憩時間を更新
+            if ($request->has('breaks')) {
+                $this->attendanceService->updateBreaks($id, $request->input('breaks'));
+            }
+
+            return redirect()->route('admin.attendance.daily')->with('message', '勤怠情報を更新しました');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', '更新に失敗しました: ' . $e->getMessage())->withInput();
         }
     }
 

@@ -3,5 +3,5 @@
   <x-common.date-navigation :date="$date" route-name="admin.attendance.daily" />
 
   <!-- 勤怠一覧テーブル -->
-  <x-common.attendance-table :attendances="$attendances" />
+  <x-common.attendance-table :attendances="$attendances" :show-edit="true" />
 </x-common.attendance-layout>

@@ -20,53 +20,59 @@
       </div>
     </div>
 
-    <form action="{{ route('modification-requests.store') }}" method="POST">
-      @csrf
-      <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
-      <!-- 出勤・退勤 -->
-      <div class="detail-row">
-        <div class="detail-label">出勤・退勤</div>
-        <div class="detail-value">
-          <input class="time-display" type="time" name="start_time"
-            value="{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '--:--' }}">
-          <span class="separator">〜</span>
-          <input class="time-display" type="time" name="end_time"
-            value="{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '--:--' }}">
-        </div>
-      </div>
-
-      <!-- 休憩時間 -->
-      @if (count($breaks) > 0)
-        @foreach ($breaks as $index => $break)
-          <div class="detail-row">
-            <div class="detail-label">休憩{{ $index + 1 }}</div>
-            <div class="detail-value">
-              <input class="time-display" type="time" name="breaks[{{ $index }}][start_time]"
-                value="{{ $break['start_time'] ? \Carbon\Carbon::parse($break['start_time'])->format('H:i') : '--:--' }}">
-              <span class="separator">〜</span>
-              <input class="time-display" type="time" name="breaks[{{ $index }}][end_time]"
-                value="{{ $break['end_time'] ? \Carbon\Carbon::parse($break['end_time'])->format('H:i') : '--:--' }}">
-            </div>
-          </div>
-        @endforeach
+    @if (auth()->user()->is_admin)
+      <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST">
+        @csrf
+        @method('PUT')
       @else
+        <form action="{{ route('modification-requests.store') }}" method="POST">
+          @csrf
+          <input type="hidden" name="attendance_id" value="{{ $attendance->id }}">
+    @endif
+    <!-- 出勤・退勤 -->
+    <div class="detail-row">
+      <div class="detail-label">出勤・退勤</div>
+      <div class="detail-value">
+        <input class="time-display" type="time" name="start_time"
+          value="{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '--:--' }}">
+        <span class="separator">〜</span>
+        <input class="time-display" type="time" name="end_time"
+          value="{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '--:--' }}">
+      </div>
+    </div>
+
+    <!-- 休憩時間 -->
+    @if (count($breaks) > 0)
+      @foreach ($breaks as $index => $break)
         <div class="detail-row">
-          <div class="detail-label">休憩</div>
+          <div class="detail-label">休憩{{ $index + 1 }}</div>
           <div class="detail-value">
-            <span class="time-display">--:--</span>
+            <input class="time-display" type="time" name="breaks[{{ $index }}][start_time]"
+              value="{{ $break['start_time'] ? \Carbon\Carbon::parse($break['start_time'])->format('H:i') : '--:--' }}">
             <span class="separator">〜</span>
-            <span class="time-display">--:--</span>
+            <input class="time-display" type="time" name="breaks[{{ $index }}][end_time]"
+              value="{{ $break['end_time'] ? \Carbon\Carbon::parse($break['end_time'])->format('H:i') : '--:--' }}">
           </div>
         </div>
-      @endif
-
-      <!-- 備考 -->
+      @endforeach
+    @else
       <div class="detail-row">
-        <div class="detail-label">備考</div>
+        <div class="detail-label">休憩</div>
         <div class="detail-value">
-          <textarea class="remarks-textarea" name="remarks">{{ $attendance->remarks }}</textarea>
+          <span class="time-display">--:--</span>
+          <span class="separator">〜</span>
+          <span class="time-display">--:--</span>
         </div>
       </div>
+    @endif
+
+    <!-- 備考 -->
+    <div class="detail-row">
+      <div class="detail-label">備考</div>
+      <div class="detail-value">
+        <textarea class="remarks-textarea" name="remarks">{{ $attendance->remarks }}</textarea>
+      </div>
+    </div>
   </div>
 
   @if ($modificationRequest && $modificationRequest->status === 'pending')

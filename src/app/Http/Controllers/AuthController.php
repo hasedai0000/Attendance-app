@@ -6,7 +6,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use App\Domain\User\Services\CreateUserService;
 use App\Http\Requests\Auth\LoginRequest;
@@ -76,17 +75,9 @@ class AuthController extends Controller
 
             return redirect('/email/verify');
         } catch (ValidationException $e) {
-
             return redirect()->back()->withErrors($e->errors());
         }
     }
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with(['status' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
 
     /**
      * メール認証確認画面表示
