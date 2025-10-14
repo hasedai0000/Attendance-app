@@ -1,34 +1,32 @@
-# coachtech フリマ
+# 勤怠管理システム
 
 ## プロジェクトの概要
 
-coachtech フリマは、Laravel で構築されたフリーマーケットアプリケーションです。ユーザーが商品を出品・購入・閲覧できるプラットフォームを提供します。
+勤怠管理システムは、Laravel で構築された勤怠管理アプリケーションです。一般ユーザーが勤怠の打刻・確認・修正申請を行い、管理者が勤怠情報の管理・承認を行うプラットフォームを提供します。
 
 ### 主な機能
 
-- **ユーザー認証・管理**
+- **一般ユーザー機能**
 
   - 新規会員登録・ログイン・ログアウト
-  - メール認証機能
-  - プロフィール編集・住所管理
+  - メール認証機能（MailHog/Mailtrap）
+  - 勤怠打刻（出勤・休憩・退勤）
+  - 勤怠一覧・詳細確認
+  - 勤怠修正申請
+  - 申請状況確認（承認待ち・承認済み）
 
-- **商品関連機能**
+- **管理者機能**
 
-  - 商品出品・編集・削除
-  - 商品検索・カテゴリー別表示
-  - 商品詳細表示・画像アップロード
-  - お気に入り機能・コメント機能
-
-- **購入・決済機能**
-
-  - 商品購入機能
-  - Stripe 決済連携
-  - 配送先住所変更
+  - 管理者ログイン・ログアウト
+  - 日次勤怠一覧確認
+  - スタッフ一覧・月次勤怠確認
+  - 勤怠詳細確認・修正
+  - 修正申請承認
+  - CSV 出力機能
 
 - **その他**
   - レスポンシブデザイン対応
   - バリデーション機能
-  - ファイルアップロード機能
   - CI/CD (GitHub Actions)
 
 ## 使用技術
@@ -45,10 +43,10 @@ coachtech フリマは、Laravel で構築されたフリーマーケットア�
 - **JavaScript**
 - **Blade テンプレートエンジン**
 
-### 認証・決済
+### 認証・メール
 
 - **Laravel Fortify** (認証機能)
-- **Laravel Cashier** (Stripe 決済)
+- **MailHog/Mailtrap** (メール送信テスト)
 
 ### 開発・運用環境
 
@@ -77,12 +75,12 @@ coachtech フリマは、Laravel で構築されたフリーマーケットア�
 
 ```bash
 # SSHでクローンする場合
-git clone git@github.com:hasedai0000/furima-app.git
+git clone git@github.com:hasedai0000/attendance-app.git
 
 # HTTPSでクローンする場合
-git clone https://github.com/hasedai0000/furima-app.git
+git clone https://github.com/hasedai0000/attendance-app.git
 
-cd furima-app
+cd attendance-app
 ```
 
 ### 2. 環境の起動
@@ -107,7 +105,7 @@ cp .env.example .env
 # アプリケーションキーの生成
 php artisan key:generate
 
-# 画像保存のためシンボリックリンクを作成する
+# ストレージのシンボリックリンクを作成する
 php artisan storage:link
 
 # データベースマイグレーションとシーダーの実行
@@ -120,9 +118,9 @@ php artisan migrate:fresh --seed
 ```bash
 
 # .envにDB接続情報の設定
-DB_DATABASE=laravel_db
-DB_USERNAME=laravel_user
-DB_PASSWORD=laravel_pass
+DB_DATABASE=attendance_db
+DB_USERNAME=attendance_user
+DB_PASSWORD=attendance_pass
 DB_HOST=mysql #（コンテナ間通信）
 
 # データベースマイグレーションとシーダーの実行
@@ -146,7 +144,7 @@ docker compose up -d
 
 ## ログイン情報
 
-### テストユーザー（一般ユーザー）
+### 一般ユーザー
 
 以下のアカウントでログインできます：
 
@@ -158,6 +156,12 @@ docker compose up -d
 | 鈴木美咲       | suzuki@example.com    | password   | 認証済み |
 | 高橋健太       | takahashi@example.com | password   | 認証済み |
 
+### 管理者ユーザー
+
+| ユーザー名 | メールアドレス    | パスワード | 状態     |
+| ---------- | ----------------- | ---------- | -------- |
+| 管理者     | admin@example.com | password   | 認証済み |
+
 ### メール未認証ユーザー
 
 | ユーザー名 | メールアドレス     | パスワード | 状態   |
@@ -165,19 +169,20 @@ docker compose up -d
 | 山田次郎   | yamada@example.com | password   | 未認証 |
 | 伊藤愛     | ito@example.com    | password   | 未認証 |
 
-## Stripe の設定
+## メール設定
 
-### API キーの設定
+### MailHog の設定
 
-- **STRIPE_KEY**: 自身の公開可能キー
-- **STRIPE_SECRET**: 自身のシークレットキー
+開発環境では MailHog を使用してメール送信をテストできます。
 
-### 決済時のカード情報
+- **MailHog URL**: http://localhost:8025
+- **SMTP 設定**: ローカルホストの 1025 ポートを使用
 
-- **カード番号**: 4242 4242 4242 4242
-- **有効期限**: 04/31（現在より未来なら可）
-- **セキュリティコード**: 424（3 桁ならなんでも可）
-- **氏名**: 任意
+### メール認証機能
+
+- 新規会員登録時にメール認証が送信されます
+- メール認証が完了していない場合は、ログイン時に認証誘導画面が表示されます
+- 認証メールの再送機能も利用できます
 
 ## 開発時の操作
 
@@ -223,8 +228,8 @@ docker compose exec mysql bash
 
 ```bash
 # MySQLコンテナ内でMySQLにログイン
-docker compose exec mysql mysql -u laravel_user -p laravel_db
-# パスワード: laravel_pass
+docker compose exec mysql mysql -u attendance_user -p attendance_db
+# パスワード: attendance_pass
 ```
 
 ### 開発用コマンド
@@ -239,7 +244,7 @@ php artisan migrate
 php artisan db:seed
 
 # テスト用のDBを作成
-docker compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS furima_test;"
+docker compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS attendance_test;"
 
 # マイグレーション
 docker compose exec php php artisan migrate --env=testing
@@ -277,7 +282,7 @@ composer test      # PHPUnit テストを実行
 ## ファイル構成
 
 ```
-Furima/
+Attendance-app/
 ├── docker/                 # Docker設定
 │   ├── nginx/
 │   │   └── default.conf    # Nginx設定
