@@ -15,7 +15,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: furima_test
+          MYSQL_DATABASE: laravel_test
         ports:
           - 3306:3306
         options: >-
@@ -62,7 +62,7 @@ jobs:
           echo "DB_CONNECTION=mysql" >> .env
           echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=furima_test" >> .env
+          echo "DB_DATABASE=laravel_test" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=root" >> .env
           echo "CACHE_DRIVER=array" >> .env

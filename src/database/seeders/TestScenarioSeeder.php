@@ -33,6 +33,17 @@ class TestScenarioSeeder extends Seeder
 
     foreach ($testScenarios as $scenario) {
       try {
+        // 既存の勤怠データをチェック
+        $existingAttendance = DB::table('attendances')
+          ->where('user_id', $scenario['attendance']['user_id'])
+          ->where('date', $scenario['attendance']['date'])
+          ->first();
+
+        if ($existingAttendance) {
+          $this->command->warn("テストシナリオ '{$scenario['name']}' は既に存在するためスキップしました。");
+          continue;
+        }
+
         DB::table('attendances')->insert($scenario['attendance']);
         $createdCount++;
 
@@ -68,23 +79,31 @@ class TestScenarioSeeder extends Seeder
     $yesterday = $today->copy()->subDay();
     $lastWeek = $today->copy()->subWeek();
 
+    // ユーザーインデックスを管理して重複を避ける
+    $userIndex = 0;
+    $getNextUser = function () use (&$userIndex, $users) {
+      $user = $users[$userIndex % count($users)];
+      $userIndex++;
+      return $user;
+    };
+
     // シナリオ1: 今日の勤務中ユーザー
-    $scenarios[] = $this->createWorkingUserScenario($users[0], $today);
+    $scenarios[] = $this->createWorkingUserScenario($getNextUser(), $today);
 
     // シナリオ2: 今日の休憩中ユーザー
-    $scenarios[] = $this->createOnBreakUserScenario($users[1] ?? $users[0], $today);
+    $scenarios[] = $this->createOnBreakUserScenario($getNextUser(), $today);
 
     // シナリオ3: 今日の退勤済みユーザー
-    $scenarios[] = $this->createFinishedUserScenario($users[2] ?? $users[0], $today);
+    $scenarios[] = $this->createFinishedUserScenario($getNextUser(), $today);
 
     // シナリオ4: 昨日の勤怠データ（修正申請あり）
-    $scenarios[] = $this->createModificationRequestScenario($users[3] ?? $users[0], $yesterday);
+    $scenarios[] = $this->createModificationRequestScenario($getNextUser(), $yesterday);
 
     // シナリオ5: 先週の勤怠データ（複数日分）
     for ($i = 0; $i < 3; $i++) {
       $date = $lastWeek->copy()->addDays($i);
       if (!$date->isWeekend()) {
-        $scenarios[] = $this->createHistoricalAttendanceScenario($users[4] ?? $users[0], $date, $i);
+        $scenarios[] = $this->createHistoricalAttendanceScenario($getNextUser(), $date, $i);
       }
     }
 
@@ -94,11 +113,12 @@ class TestScenarioSeeder extends Seeder
       $scenarios[] = $this->createAdminUserScenario($adminUser->id, $today);
     }
 
-    // シナリオ7: エッジケース - 深夜勤務
-    $scenarios[] = $this->createNightShiftScenario($users[5] ?? $users[0], $today);
+    // シナリオ7: エッジケース - 深夜勤務（昨日の日付を使用）
+    $scenarios[] = $this->createNightShiftScenario($getNextUser(), $yesterday);
 
-    // シナリオ8: エッジケース - 短時間勤務
-    $scenarios[] = $this->createShortWorkScenario($users[6] ?? $users[0], $today);
+    // シナリオ8: エッジケース - 短時間勤務（一昨日の日付を使用）
+    $dayBeforeYesterday = $today->copy()->subDays(2);
+    $scenarios[] = $this->createShortWorkScenario($getNextUser(), $dayBeforeYesterday);
 
     return $scenarios;
   }

@@ -80,7 +80,7 @@ git clone git@github.com:hasedai0000/attendance-app.git
 # HTTPSでクローンする場合
 git clone https://github.com/hasedai0000/attendance-app.git
 
-cd attendance-app
+cd Attendance-app
 ```
 
 ### 2. 環境の起動
@@ -118,9 +118,9 @@ php artisan migrate:fresh --seed
 ```bash
 
 # .envにDB接続情報の設定
-DB_DATABASE=attendance_db
-DB_USERNAME=attendance_user
-DB_PASSWORD=attendance_pass
+DB_DATABASE=laravel_db
+DB_USERNAME=laravel_user
+DB_PASSWORD=laravel_pass
 DB_HOST=mysql #（コンテナ間通信）
 
 # データベースマイグレーションとシーダーの実行
@@ -132,7 +132,7 @@ php artisan migrate:fresh --seed
 
 ブラウザで以下の URL にアクセスして、アプリケーションが正常に動作することを確認してください：
 
-- **アプリケーション**: http://localhost
+- **アプリケーション**: http://localhost/login
 - **PHPMyAdmin**: http://localhost:8080
 - **MailHog**: http://localhost:8025
 
@@ -144,23 +144,31 @@ docker compose up -d
 
 ## ログイン情報
 
-### 一般ユーザー
+### 管理者ユーザー
+
+| ユーザー名     | メールアドレス    | パスワード | 状態     |
+| -------------- | ----------------- | ---------- | -------- |
+| 管理者         | admin@example.com | password   | 認証済み |
+| テストユーザー | test@example.com  | password   | 認証済み |
+
+### 一般ユーザー（認証済み）
 
 以下のアカウントでログインできます：
 
-| ユーザー名     | メールアドレス        | パスワード | 状態     |
-| -------------- | --------------------- | ---------- | -------- |
-| テストユーザー | test@example.com      | password   | 認証済み |
-| 田中太郎       | tanaka@example.com    | password   | 認証済み |
-| 佐藤花子       | sato@example.com      | password   | 認証済み |
-| 鈴木美咲       | suzuki@example.com    | password   | 認証済み |
-| 高橋健太       | takahashi@example.com | password   | 認証済み |
-
-### 管理者ユーザー
-
-| ユーザー名 | メールアドレス    | パスワード | 状態     |
-| ---------- | ----------------- | ---------- | -------- |
-| 管理者     | admin@example.com | password   | 認証済み |
+| ユーザー名 | メールアドレス        | パスワード | 状態     |
+| ---------- | --------------------- | ---------- | -------- |
+| 田中太郎   | tanaka@example.com    | password   | 認証済み |
+| 佐藤花子   | sato@example.com      | password   | 認証済み |
+| 鈴木美咲   | suzuki@example.com    | password   | 認証済み |
+| 高橋健太   | takahashi@example.com | password   | 認証済み |
+| 渡辺翔太   | watanabe@example.com  | password   | 認証済み |
+| 中村優子   | nakamura@example.com  | password   | 認証済み |
+| 小林大輔   | kobayashi@example.com | password   | 認証済み |
+| 加藤結衣   | kato@example.com      | password   | 認証済み |
+| 森田浩司   | morita@example.com    | password   | 認証済み |
+| 松本あかり | matsumoto@example.com | password   | 認証済み |
+| 橋本拓也   | hashimoto@example.com | password   | 認証済み |
+| 清水恵子   | shimizu@example.com   | password   | 認証済み |
 
 ### メール未認証ユーザー
 
@@ -228,7 +236,7 @@ docker compose exec mysql bash
 
 ```bash
 # MySQLコンテナ内でMySQLにログイン
-docker compose exec mysql mysql -u attendance_user -p attendance_db
+docker compose exec mysql mysql -u laravel_user -p laravel_db
 # パスワード: attendance_pass
 ```
 
@@ -244,7 +252,7 @@ php artisan migrate
 php artisan db:seed
 
 # テスト用のDBを作成
-docker compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS attendance_test;"
+docker compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS laravel_test;"
 
 # マイグレーション
 docker compose exec php php artisan migrate --env=testing

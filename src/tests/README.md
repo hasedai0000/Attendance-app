@@ -6,13 +6,13 @@
 
 ### 1. 専用テストデータベースの使用
 
--   テスト実行時は`furima_test`データベースを使用
+-   テスト実行時は`laravel_test`データベースを使用
 -   各テスト後にトランザクションロールバックでデータをクリーンアップ
 -   本番の`furima`データベースに影響を与えない
 
 ```bash
 // テスト用のDBを作成
-docker compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS furima_test;"
+docker compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS laravel_test;"
 
 // マイグレーション
 docker compose exec php php artisan migrate --env=testing
@@ -156,7 +156,7 @@ php artisan test --filter test_procedure_returns_view_with_correct_contract
 
 ```xml
 <server name="DB_CONNECTION" value="mysql"/>
-<server name="DB_DATABASE" value="furima_test"/>
+<server name="DB_DATABASE" value="laravel_test"/>
 ```
 
 ## 初期セットアップ
@@ -165,7 +165,7 @@ php artisan test --filter test_procedure_returns_view_with_correct_contract
 
 ```bash
 # Dockerコンテナ内でテスト用DB作成
-docker compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS furima_test;"
+docker compose exec mysql mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS laravel_test;"
 ```
 
 ## パフォーマンス
