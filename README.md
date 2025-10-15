@@ -62,6 +62,258 @@
 - **PHP CS Fixer** (コード整形)
 - **PHPUnit** (テスト)
 
+## データベース設計
+
+### ER 図
+
+```mermaid
+erDiagram
+    users {
+        UUID id PK
+        VARCHAR name "NOT NULL"
+        VARCHAR email UK "NOT NULL, UNIQUE"
+        TIMESTAMP email_verified_at
+        VARCHAR password "NOT NULL"
+        BOOLEAN is_admin "NOT NULL, DEFAULT FALSE"
+        TIMESTAMP created_at "NOT NULL"
+        TIMESTAMP updated_at "NOT NULL"
+    }
+
+    attendances {
+        UUID id PK
+        UUID user_id FK "NOT NULL"
+        DATE date "NOT NULL"
+        TIME start_time
+        TIME end_time
+        ENUM status "NOT NULL, DEFAULT 'not_working'"
+        TEXT remarks
+        TIMESTAMP created_at "NOT NULL"
+        TIMESTAMP updated_at "NOT NULL"
+    }
+
+    breaks {
+        UUID id PK
+        UUID attendance_id FK "NOT NULL, CASCADE DELETE"
+        TIME start_time "NOT NULL"
+        TIME end_time
+        TIMESTAMP created_at "NOT NULL"
+        TIMESTAMP updated_at "NOT NULL"
+    }
+
+    modification_requests {
+        UUID id PK
+        UUID attendance_id FK "NOT NULL, CASCADE DELETE"
+        UUID user_id FK "NOT NULL"
+        TIME requested_start_time
+        TIME requested_end_time
+        TEXT requested_remarks "NOT NULL"
+        ENUM status "NOT NULL, DEFAULT 'pending'"
+        UUID approved_by FK
+        TIMESTAMP approved_at
+        TIMESTAMP created_at "NOT NULL"
+        TIMESTAMP updated_at "NOT NULL"
+    }
+
+    modification_request_breaks {
+        UUID id PK
+        UUID modification_request_id FK "NOT NULL, CASCADE DELETE"
+        TIME requested_start_time "NOT NULL"
+        TIME requested_end_time
+        TIMESTAMP created_at "NOT NULL"
+        TIMESTAMP updated_at "NOT NULL"
+    }
+
+    users ||--o{ attendances : "1対多"
+    attendances ||--o{ breaks : "1対多"
+    attendances ||--o{ modification_requests : "1対多"
+    users ||--o{ modification_requests : "申請者(1対多)"
+    users ||--o{ modification_requests : "承認者(1対多)"
+    modification_requests ||--o{ modification_request_breaks : "1対多"
+```
+
+### テーブル説明
+
+#### 1. users（ユーザー）
+
+- システムのユーザー情報を管理
+- 管理者フラグ（is_admin）で権限を制御
+
+#### 2. attendances（勤怠記録）
+
+- 日別の勤怠情報を管理
+- ステータス（not_working, working, on_break, finished）で勤務状態を管理
+
+#### 3. breaks（休憩記録）
+
+- 勤怠記録に紐づく休憩時間を管理
+
+#### 4. modification_requests（修正申請）
+
+- 勤怠記録の修正申請を管理
+- 申請者と承認者の両方で users テーブルと関連
+
+#### 5. modification_request_breaks（修正申請休憩）
+
+- 修正申請に含まれる休憩時間の修正を管理
+
+### リレーションシップ
+
+1. **users → attendances**: 1 対多（1 人のユーザーは複数の勤怠記録を持つ）
+2. **attendances → breaks**: 1 対多（1 つの勤怠記録は複数の休憩記録を持つ）
+3. **attendances → modification_requests**: 1 対多（1 つの勤怠記録は複数の修正申請を持つ）
+4. **users → modification_requests**: 1 対多（申請者として）
+5. **users → modification_requests**: 1 対多（承認者として）
+6. **modification_requests → modification_request_breaks**: 1 対多（1 つの修正申請は複数の休憩修正を含む）
+
+### ENUM 値
+
+#### attendances.status
+
+- `not_working`: 勤務外
+- `working`: 出勤中
+- `on_break`: 休憩中
+- `finished`: 退勤済
+
+#### modification_requests.status
+
+- `pending`: 承認待ち
+- `approved`: 承認済み
+
+### テーブル仕様書
+
+#### 1. users テーブル（ユーザー）
+
+| カラム名          | データ型     | 制約                    | 説明                     |
+| ----------------- | ------------ | ----------------------- | ------------------------ |
+| id                | UUID         | PRIMARY KEY             | ユーザー ID              |
+| name              | VARCHAR(255) | NOT NULL                | ユーザー名               |
+| email             | VARCHAR(255) | NOT NULL, UNIQUE        | メールアドレス           |
+| email_verified_at | TIMESTAMP    | NULL                    | メール認証日時           |
+| password          | VARCHAR(255) | NOT NULL                | パスワード（ハッシュ化） |
+| is_admin          | BOOLEAN      | NOT NULL, DEFAULT FALSE | 管理者フラグ             |
+| created_at        | TIMESTAMP    | NOT NULL                | 作成日時                 |
+| updated_at        | TIMESTAMP    | NOT NULL                | 更新日時                 |
+
+**インデックス:**
+
+- PRIMARY KEY (id)
+- UNIQUE INDEX (email)
+
+#### 2. attendances テーブル（勤怠記録）
+
+| カラム名   | データ型  | 制約                            | 説明        |
+| ---------- | --------- | ------------------------------- | ----------- |
+| id         | UUID      | PRIMARY KEY                     | 勤怠記録 ID |
+| user_id    | UUID      | NOT NULL, FOREIGN KEY           | ユーザー ID |
+| date       | DATE      | NOT NULL                        | 勤怠日付    |
+| start_time | TIME      | NULL                            | 出勤時刻    |
+| end_time   | TIME      | NULL                            | 退勤時刻    |
+| status     | ENUM      | NOT NULL, DEFAULT 'not_working' | ステータス  |
+| remarks    | TEXT      | NULL                            | 備考        |
+| created_at | TIMESTAMP | NOT NULL                        | 作成日時    |
+| updated_at | TIMESTAMP | NOT NULL                        | 更新日時    |
+
+**ENUM 値 (status):**
+
+- not_working: 勤務外
+- working: 出勤中
+- on_break: 休憩中
+- finished: 退勤済
+
+**インデックス:**
+
+- PRIMARY KEY (id)
+- FOREIGN KEY (user_id) REFERENCES users(id)
+- UNIQUE INDEX (user_id, date)
+- INDEX (date)
+
+#### 3. breaks テーブル（休憩記録）
+
+| カラム名      | データ型  | 制約                  | 説明         |
+| ------------- | --------- | --------------------- | ------------ |
+| id            | UUID      | PRIMARY KEY           | 休憩記録 ID  |
+| attendance_id | UUID      | NOT NULL, FOREIGN KEY | 勤怠記録 ID  |
+| start_time    | TIME      | NOT NULL              | 休憩開始時刻 |
+| end_time      | TIME      | NULL                  | 休憩終了時刻 |
+| created_at    | TIMESTAMP | NOT NULL              | 作成日時     |
+| updated_at    | TIMESTAMP | NOT NULL              | 更新日時     |
+
+**インデックス:**
+
+- PRIMARY KEY (id)
+- FOREIGN KEY (attendance_id) REFERENCES attendances(id) ON DELETE CASCADE
+- INDEX (attendance_id)
+
+#### 4. modification_requests テーブル（修正申請）
+
+| カラム名             | データ型  | 制約                        | 説明              |
+| -------------------- | --------- | --------------------------- | ----------------- |
+| id                   | UUID      | PRIMARY KEY                 | 修正申請 ID       |
+| attendance_id        | UUID      | NOT NULL, FOREIGN KEY       | 勤怠記録 ID       |
+| user_id              | UUID      | NOT NULL, FOREIGN KEY       | 申請者ユーザー ID |
+| requested_start_time | TIME      | NULL                        | 申請出勤時刻      |
+| requested_end_time   | TIME      | NULL                        | 申請退勤時刻      |
+| requested_remarks    | TEXT      | NOT NULL                    | 申請備考          |
+| status               | ENUM      | NOT NULL, DEFAULT 'pending' | 承認状態          |
+| approved_by          | UUID      | NULL, FOREIGN KEY           | 承認者ユーザー ID |
+| approved_at          | TIMESTAMP | NULL                        | 承認日時          |
+| created_at           | TIMESTAMP | NOT NULL                    | 申請日時          |
+| updated_at           | TIMESTAMP | NOT NULL                    | 更新日時          |
+
+**ENUM 値 (status):**
+
+- pending: 承認待ち
+- approved: 承認済み
+
+**インデックス:**
+
+- PRIMARY KEY (id)
+- FOREIGN KEY (attendance_id) REFERENCES attendances(id) ON DELETE CASCADE
+- FOREIGN KEY (user_id) REFERENCES users(id)
+- FOREIGN KEY (approved_by) REFERENCES users(id)
+- INDEX (status)
+- INDEX (user_id, status)
+
+#### 5. modification_request_breaks テーブル（修正申請休憩）
+
+| カラム名                | データ型  | 制約                  | 説明             |
+| ----------------------- | --------- | --------------------- | ---------------- |
+| id                      | UUID      | PRIMARY KEY           | 修正申請休憩 ID  |
+| modification_request_id | UUID      | NOT NULL, FOREIGN KEY | 修正申請 ID      |
+| requested_start_time    | TIME      | NOT NULL              | 申請休憩開始時刻 |
+| requested_end_time      | TIME      | NULL                  | 申請休憩終了時刻 |
+| created_at              | TIMESTAMP | NOT NULL              | 作成日時         |
+| updated_at              | TIMESTAMP | NOT NULL              | 更新日時         |
+
+**インデックス:**
+
+- PRIMARY KEY (id)
+- FOREIGN KEY (modification_request_id) REFERENCES modification_requests(id) ON DELETE CASCADE
+- INDEX (modification_request_id)
+
+### データ制約・業務ルール
+
+#### attendances テーブル
+
+- 同一ユーザー・同一日付の組み合わせは一意
+- start_time < end_time（両方が NULL でない場合）
+
+#### breaks テーブル
+
+- start_time < end_time（end_time が NULL でない場合）
+- start_time は対応する attendance の start_time 以降
+- end_time は対応する attendance の end_time 以前
+
+#### modification_requests テーブル
+
+- requested_start_time < requested_end_time（両方が NULL でない場合）
+- approved_by は管理者ユーザー（is_admin = true）のみ
+- status が approved の場合、approved_by と approved_at は必須
+
+#### modification_request_breaks テーブル
+
+- requested_start_time < requested_end_time（requested_end_time が NULL でない場合）
+
 ## 環境構築手順
 
 ### 前提条件
