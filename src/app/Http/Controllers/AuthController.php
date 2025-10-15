@@ -46,12 +46,16 @@ class AuthController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
+        // ログアウト前にユーザーが管理者かどうかを判定
+        $isAdmin = Auth::user() && Auth::user()->is_admin;
+
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        // 管理者の場合は管理者ログインページに、一般ユーザーの場合は一般ログインページにリダイレクト
+        return redirect($isAdmin ? '/admin/login' : '/login');
     }
 
     /**

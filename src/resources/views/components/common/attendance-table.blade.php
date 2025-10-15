@@ -1,11 +1,17 @@
-@props(['attendances' => [], 'showDetail' => true])
+@props(['attendances' => [], 'showDetail' => true, 'showUserNames' => false])
 
 <div class="attendance-table-container">
   @if (count($attendances) > 0)
     <table class="attendance-table">
       <thead>
         <tr class="table-header">
-          <th>日付</th>
+          <th>
+            @if ($showUserNames)
+              名前
+            @else
+              日付
+            @endif
+          </th>
           <th>出勤</th>
           <th>退勤</th>
           <th>休憩</th>
@@ -19,12 +25,16 @@
         @foreach ($attendances as $attendance)
           <tr class="table-row">
             <td class="date-cell">
-              @php
-                $date = \Carbon\Carbon::parse($attendance['date'])->setTimezone('Asia/Tokyo');
-                $dayOfWeekNames = ['日', '月', '火', '水', '木', '金', '土'];
-                $dayOfWeekShort = $dayOfWeekNames[$date->dayOfWeek];
-              @endphp
-              {{ $date->format('m/d') }}({{ $dayOfWeekShort }})
+              @if ($showUserNames)
+                {{ $attendance['user']['name'] ?? '不明' }}
+              @else
+                @php
+                  $date = \Carbon\Carbon::parse($attendance['date'])->setTimezone('Asia/Tokyo');
+                  $dayOfWeekNames = ['日', '月', '火', '水', '木', '金', '土'];
+                  $dayOfWeekShort = $dayOfWeekNames[$date->dayOfWeek];
+                @endphp
+                {{ $date->format('m/d') }}({{ $dayOfWeekShort }})
+              @endif
             </td>
             <td class="time-cell">
               {{ $attendance['start_time'] ? \Carbon\Carbon::parse($attendance['start_time'])->setTimezone('Asia/Tokyo')->format('H:i') : '-' }}

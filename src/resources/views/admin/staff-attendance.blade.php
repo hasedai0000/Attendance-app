@@ -3,7 +3,7 @@
   <x-common.month-navigation :current-month="\Carbon\Carbon::createFromFormat('Y-m', $month)" route-name="admin.staff.attendance" :route-params="['id' => $user['id']]" />
 
   <!-- 勤怠一覧テーブル -->
-  <x-common.attendance-table :attendances="$attendances" :show-detail="true" :show-edit="true" />
+  <x-common.attendance-table :attendances="$attendances" :show-detail="true" :show-edit="true" :show-user-names="false" />
 
   <!-- CSV出力ボタン -->
   <div class="action-button-container">

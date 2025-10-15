@@ -158,12 +158,14 @@
       justify-content: flex-end;
       gap: 20px;
       margin-bottom: 40px;
+      width: 900px;
     }
 
     .approval-button {
+      width: 130px;
+      height: 50px;
       background-color: #000000;
       color: #FFFFFF;
-      padding: 11px 41px;
       border-radius: 5px;
       border: none;
       font-family: 'Inter', sans-serif;
@@ -180,9 +182,10 @@
     }
 
     .approved-button {
+      width: 130px;
+      height: 50px;
       background-color: #696969;
       color: #FFFFFF;
-      padding: 11px 41px;
       border-radius: 5px;
       border: none;
       font-family: 'Inter', sans-serif;

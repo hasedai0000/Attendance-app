@@ -1,4 +1,4 @@
-<x-common.attendance-layout title="申請詳細" active-page="requests">
+<x-common.attendance-layout title="勤怠詳細" active-page="requests">
   @push('styles')
     <link rel="stylesheet" href="{{ asset('css/detail-card.css') }}">
   @endpush

@@ -34,12 +34,18 @@
       <div class="detail-label">出勤・退勤</div>
       <div class="detail-value">
         <input class="time-display" type="time" name="start_time"
-          value="{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '--:--' }}">
+          value="{{ old('start_time', $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '') }}">
         <span class="separator">〜</span>
         <input class="time-display" type="time" name="end_time"
-          value="{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '--:--' }}">
+          value="{{ old('end_time', $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '') }}">
       </div>
     </div>
+    @error('start_time')
+      <div class="form-error">{{ $message }}</div>
+    @enderror
+    @error('end_time')
+      <div class="form-error">{{ $message }}</div>
+    @enderror
 
     <!-- 休憩時間 -->
     @if (count($breaks) > 0)
@@ -48,12 +54,18 @@
           <div class="detail-label">休憩{{ $index + 1 }}</div>
           <div class="detail-value">
             <input class="time-display" type="time" name="breaks[{{ $index }}][start_time]"
-              value="{{ $break['start_time'] ? \Carbon\Carbon::parse($break['start_time'])->format('H:i') : '--:--' }}">
+              value="{{ old("breaks.{$index}.start_time", $break['start_time'] ? \Carbon\Carbon::parse($break['start_time'])->format('H:i') : '') }}">
             <span class="separator">〜</span>
             <input class="time-display" type="time" name="breaks[{{ $index }}][end_time]"
-              value="{{ $break['end_time'] ? \Carbon\Carbon::parse($break['end_time'])->format('H:i') : '--:--' }}">
+              value="{{ old("breaks.{$index}.end_time", $break['end_time'] ? \Carbon\Carbon::parse($break['end_time'])->format('H:i') : '') }}">
           </div>
         </div>
+        @error("breaks.{$index}.start_time")
+          <div class="form-error">{{ $message }}</div>
+        @enderror
+        @error("breaks.{$index}.end_time")
+          <div class="form-error">{{ $message }}</div>
+        @enderror
       @endforeach
     @else
       <div class="detail-row">
@@ -70,9 +82,12 @@
     <div class="detail-row">
       <div class="detail-label">備考</div>
       <div class="detail-value">
-        <textarea class="remarks-textarea" name="remarks">{{ $attendance->remarks }}</textarea>
+        <textarea class="remarks-textarea" name="remarks">{{ old('remarks', $attendance->remarks) }}</textarea>
       </div>
     </div>
+    @error('remarks')
+      <div class="form-error">{{ $message }}</div>
+    @enderror
   </div>
 
   @if ($modificationRequest && $modificationRequest->status === 'pending')
@@ -86,5 +101,4 @@
   @endif
 
   </form>
-  </div>
 </x-common.attendance-layout>
