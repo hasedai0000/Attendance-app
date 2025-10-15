@@ -2,23 +2,15 @@
 
 namespace App\Providers;
 
-use App\Application\Contracts\FileUploadServiceInterface;
-use App\Application\Services\FileUploadService;
 use App\Domain\Attendance\Repositories\AttendanceRepositoryInterface;
 use App\Domain\Breaks\Repositories\BreaksRepositoryInterface;
 use App\Domain\ModificationRequest\Repositories\ModificationRequestInterface;
 use App\Domain\ModificationRequestBreaks\Repositories\ModificationRequestBreaksInterface;
-// ProfileとPurchase関連のリポジトリは出退勤管理アプリケーションでは使用しないため、コメントアウト
-// use App\Domain\Profile\Repositories\ProfileRepositoryInterface;
-// use App\Domain\Purchase\Repositories\PurchaseRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Infrastructure\Repositories\EloquentAttendanceRepository;
 use App\Infrastructure\Repositories\EloquentBreaksRepository;
 use App\Infrastructure\Repositories\EloquentModificationRequestRepository;
 use App\Infrastructure\Repositories\EloquentModificationRequestBreaksRepository;
-// ProfileとPurchase関連のEloquentリポジトリは出退勤管理アプリケーションでは使用しないため、コメントアウト
-// use App\Infrastructure\Repositories\EloquentProfileRepository;
-// use App\Infrastructure\Repositories\EloquentPurchaseRepository;
 use App\Infrastructure\Repositories\EloquentUserRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
